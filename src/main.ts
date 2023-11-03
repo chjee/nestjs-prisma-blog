@@ -1,12 +1,21 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: ['error', 'warn', 'debug', 'verbose'],
+    logger: ['error', 'warn', 'log', 'debug', 'verbose'],
     cors: { origin: '*', methods: 'GET,HEAD,PUT,PATCH,POST,DELETE' },
   });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   app.enableShutdownHooks();
 
@@ -15,4 +24,5 @@ async function bootstrap() {
   await app.listen(listenPort);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
+
 bootstrap();
