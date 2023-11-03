@@ -1,10 +1,20 @@
 {
   "name": "nestjs-prisma-blog",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "NestJS, Prisma, MySQL, Typescript를 이용한 REST API",
+  "author": "Changhoon Jee <chjee71@gmail.com>",
   "private": true,
   "license": "UNLICENSED",
+  "keywords": [
+    "nestjs",
+    "prisma",
+    "mysql",
+    "typescript"
+  ],
+  "engines": {
+    "node": ">=18.17.1",
+    "npm": ">=9.6.7"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -21,7 +31,9 @@
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
+    "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",
+    "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^10.0.0",
     "@prisma/client": "^5.5.2",
     "reflect-metadata": "^0.1.13",
