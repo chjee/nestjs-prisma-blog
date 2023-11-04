@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User as UserModel } from '@prisma/client';
@@ -22,21 +23,27 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  // @Get()
-  // async findAll(@Body() inputs: ): Promise<UserModel[]> {
-  //   return this.userService.findAll();
-  // }
+  @Get()
+  async findAll(
+    @Query('skip', ParseIntPipe) skip: number,
+    @Query('take', ParseIntPipe) take: number,
+  ): Promise<UserModel[]> {
+    return this.userService.findAll({
+      skip: skip,
+      take: take,
+    });
+  }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
     return this.userService.findOne({ id });
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
-  ) {
+  ): Promise<UserModel> {
     return this.userService.update({ where: { id: id }, data: updateUserDto });
   }
 
