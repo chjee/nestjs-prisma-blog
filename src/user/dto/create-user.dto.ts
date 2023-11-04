@@ -1,22 +1,15 @@
 import { $Enums } from '@prisma/client';
-import {
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsString,
-  Min,
-  MinLength,
-} from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
-  @Min(0)
+  @Length(4, 60)
   readonly name: string;
 
   @IsNotEmpty()
   @IsEmail()
-  @MinLength(6)
+  @Length(6, 60)
   readonly email: string;
 
   @IsString()
