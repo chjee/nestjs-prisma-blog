@@ -9,7 +9,7 @@ import { PostModule } from './post/post.module';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      envFilePath: '.env',
+      envFilePath: '.env.dev, .env',
     }),
     PrismaModule,
     UserModule,
