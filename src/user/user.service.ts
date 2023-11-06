@@ -37,6 +37,15 @@ export class UserService {
     });
   }
 
+  async findUser(username: string): Promise<User> {
+    return this.prisma.user.findFirst({
+      include: {
+        profile: true,
+      },
+      where: { username: username },
+    });
+  }
+
   async update(params: {
     where: Prisma.UserWhereUniqueInput;
     data: Prisma.UserUpdateInput;
