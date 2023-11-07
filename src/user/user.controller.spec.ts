@@ -14,7 +14,8 @@ describe('UserController', () => {
     id: 1,
     createdAt: new Date(),
     email: 'chjee@naver.com',
-    name: 'Andrew',
+    username: 'Andrew',
+    password: '123456',
     role: 'ADMIN',
   };
 
@@ -23,7 +24,8 @@ describe('UserController', () => {
       id: 1,
       createdAt: new Date(),
       email: 'alice@prisma.io',
-      name: 'Alice',
+      username: 'Alice',
+      password: '123456',
       role: 'USER',
     },
   ];
@@ -44,7 +46,8 @@ describe('UserController', () => {
     it('should return a user', async () => {
       const createUserDto: CreateUserDto = {
         email: 'chjee@naver.com',
-        name: 'Andrew',
+        username: 'Andrew',
+        password: '123456',
         role: 'ADMIN',
       };
 

@@ -11,9 +11,10 @@ describe('UserService', () => {
   const user: User = {
     id: 1,
     createdAt: new Date(),
-    email: 'alice@prisma.io',
-    name: 'Alice',
-    role: 'USER',
+    email: 'chjee@naver.com',
+    username: 'Andrew',
+    password: '123456',
+    role: 'ADMIN',
   };
 
   const users: User[] = [
@@ -21,7 +22,8 @@ describe('UserService', () => {
       id: 1,
       createdAt: new Date(),
       email: 'alice@prisma.io',
-      name: 'Alice',
+      username: 'Alice',
+      password: '123456',
       role: 'USER',
     },
   ];
@@ -38,7 +40,8 @@ describe('UserService', () => {
     it('should return a user', async () => {
       const createUserDto: CreateUserDto = {
         email: 'chjee@naver.com',
-        name: 'Andrew',
+        username: 'Andrew',
+        password: '123456',
         role: 'ADMIN',
       };
       jest.spyOn(service, 'create').mockImplementation(async () => user);
