@@ -28,11 +28,11 @@ describe('PostService', () => {
     },
   ];
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    const moduleRef: TestingModule = await Test.createTestingModule({
       providers: [PrismaService, PostService],
     }).compile();
 
-    service = module.get<PostService>(PostService);
+    service = moduleRef.get<PostService>(PostService);
   });
 
   describe('create', () => {

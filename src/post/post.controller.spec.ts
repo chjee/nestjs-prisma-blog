@@ -31,13 +31,13 @@ describe('PostController', () => {
   ];
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [PostController],
       providers: [PrismaService, PostService],
     }).compile();
 
-    controller = module.get<PostController>(PostController);
-    service = module.get<PostService>(PostService);
+    controller = moduleRef.get<PostController>(PostController);
+    service = moduleRef.get<PostService>(PostService);
   });
 
   describe('create', () => {
