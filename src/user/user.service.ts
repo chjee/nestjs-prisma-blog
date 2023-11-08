@@ -16,9 +16,17 @@ export class UserService {
     cursor?: Prisma.UserWhereUniqueInput;
     where?: Prisma.UserWhereInput;
     orderBy?: Prisma.UserOrderByWithRelationInput;
-  }): Promise<User[]> {
+  }): Promise<Partial<User>[]> {
     const { skip, take, cursor, where, orderBy } = params;
     return this.prisma.user.findMany({
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        profile: true,
+        posts: true,
+      },
       skip,
       take,
       cursor,
@@ -27,15 +35,29 @@ export class UserService {
     });
   }
 
-  async findOne(where: Prisma.UserWhereUniqueInput): Promise<User> {
+  async findOne(where: Prisma.UserWhereUniqueInput): Promise<Partial<User>> {
     return this.prisma.user.findUnique({
-      include: {
-        posts: true,
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
         profile: true,
+        posts: true,
       },
       where,
     });
   }
+
+  // async findOne(where: Prisma.UserWhereUniqueInput): Promise<User> {
+  //   return this.prisma.user.findUnique({
+  //     include: {
+  //       posts: true,
+  //       profile: true,
+  //     },
+  //     where,
+  //   });
+  // }
 
   async findUser(username: string): Promise<User> {
     return this.prisma.user.findFirst({

@@ -27,7 +27,7 @@ export class UserController {
   async findAll(
     @Query('skip', ParseIntPipe) skip: number,
     @Query('take', ParseIntPipe) take: number,
-  ): Promise<UserModel[]> {
+  ): Promise<Partial<UserModel>[]> {
     return this.userService.findAll({
       skip: skip,
       take: take,
@@ -35,7 +35,9 @@ export class UserController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Partial<UserModel>> {
     return this.userService.findOne({ id });
   }
 
