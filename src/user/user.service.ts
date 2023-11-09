@@ -71,16 +71,28 @@ export class UserService {
   async update(params: {
     where: Prisma.UserWhereUniqueInput;
     data: Prisma.UserUpdateInput;
-  }): Promise<User> {
+  }): Promise<Partial<User>> {
     const { where, data } = params;
     return this.prisma.user.update({
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+      },
       data,
       where,
     });
   }
 
-  async remove(where: Prisma.UserWhereUniqueInput): Promise<User> {
+  async remove(where: Prisma.UserWhereUniqueInput): Promise<Partial<User>> {
     return this.prisma.user.delete({
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+      },
       where,
     });
   }
