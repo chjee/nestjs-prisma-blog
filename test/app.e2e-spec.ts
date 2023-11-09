@@ -15,6 +15,15 @@ describe('AppController (e2e)', () => {
     role: 'USER',
   };
 
+  const mockPost = {
+    id: 1,
+    title: 'Check out Prisma with Nest.js',
+    published: false,
+    createdAt: '2023-11-05T13:09:13.135Z',
+    updatedAt: '2023-11-05T13:09:13.135Z',
+    userId: 1,
+  };
+
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -57,7 +66,6 @@ describe('AppController (e2e)', () => {
         .expect(HttpStatus.CREATED)
         .expect((res) => {
           mockUser.id = res.body.id;
-          console.log(mockUser);
         });
     });
 
@@ -71,29 +79,62 @@ describe('AppController (e2e)', () => {
     it('GET', () => {
       return request(app.getHttpServer())
         .get(`/user/${mockUser.id}`)
-        .expect(HttpStatus.OK)
-        .expect((res) => {
-          console.log(res.body);
-        });
+        .expect(HttpStatus.OK);
     });
 
     it('PATCH', () => {
       return request(app.getHttpServer())
         .patch(`/user/${mockUser.id}`)
         .send({ username: 'andrew', role: 'USER' })
-        .expect(HttpStatus.OK)
-        .expect((res) => {
-          console.log(res.body);
-        });
+        .expect(HttpStatus.OK);
     });
 
     it('DELETE', () => {
       return request(app.getHttpServer())
         .delete(`/user/${mockUser.id}`)
-        .expect(HttpStatus.OK)
+        .expect(HttpStatus.OK);
+    });
+  });
+
+  describe('/post', () => {
+    it('POST 201', () => {
+      return request(app.getHttpServer())
+        .post('/post')
+        .send({
+          title: 'Just 5 minutes.',
+          published: false,
+          userId: 1,
+        })
+        .expect(HttpStatus.CREATED)
         .expect((res) => {
-          console.log(res.body);
+          mockPost.id = res.body.id;
         });
+    });
+
+    it('GET', () => {
+      return request(app.getHttpServer())
+        .get('/post')
+        .query({ skip: 0, take: 3 })
+        .expect(HttpStatus.OK);
+    });
+
+    it('GET', () => {
+      return request(app.getHttpServer())
+        .get(`/post/${mockPost.id}`)
+        .expect(HttpStatus.OK);
+    });
+
+    it('PATCH', () => {
+      return request(app.getHttpServer())
+        .patch(`/post/${mockPost.id}`)
+        .send({ title: 'Just 10 minutes.', published: true })
+        .expect(HttpStatus.OK);
+    });
+
+    it('DELETE', () => {
+      return request(app.getHttpServer())
+        .delete(`/post/${mockPost.id}`)
+        .expect(HttpStatus.OK);
     });
   });
 
