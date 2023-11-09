@@ -12,9 +12,9 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
       cache: true,
       envFilePath: '.env.dev, .env',
     }),
+    AuthModule,
     UserModule,
     PostModule,
-    AuthModule,
   ],
   providers: [
     { provide: 'APP_GUARD', useExisting: JwtAuthGuard },
