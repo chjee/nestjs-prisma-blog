@@ -1,5 +1,5 @@
 import * as request from 'supertest';
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { UserModule } from '../src/user/user.module';
 import { UserService } from '../src/user/user.service';
@@ -7,14 +7,14 @@ import { UserService } from '../src/user/user.service';
 describe('UserController (e2e)', () => {
   let app: INestApplication;
   const userService = {
-    create: () => user,
-    findAll: () => [user],
-    findOne: () => user,
-    update: () => user,
-    remove: () => user,
+    create: () => mockUser,
+    findAll: () => [mockUser, mockUser],
+    findOne: () => mockUser,
+    update: () => mockUser,
+    remove: () => mockUser,
   };
 
-  const user = {
+  const mockUser = {
     id: 1,
     username: 'Alice',
     email: 'alice@prisma.io',
@@ -22,7 +22,7 @@ describe('UserController (e2e)', () => {
   };
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
+    const moduleRef: TestingModule = await Test.createTestingModule({
       imports: [UserModule],
     })
       .overrideProvider(UserService)
@@ -37,9 +37,9 @@ describe('UserController (e2e)', () => {
     return request(app.getHttpServer())
       .post('/user')
       .send({
-        email: 'chjee@naver.com',
+        email: 'andrew@prisma.io',
         username: 'Andrew',
-        password: '123456',
+        password: 'whoami',
         role: 'ADMIN',
       })
       .expect(HttpStatus.CREATED)
@@ -56,14 +56,14 @@ describe('UserController (e2e)', () => {
 
   it('/GET user', () => {
     return request(app.getHttpServer())
-      .get('/user/1')
+      .get(`/user/${mockUser.id}`)
       .expect(HttpStatus.OK)
       .expect(userService.findOne());
   });
 
   it('/PATCH user', () => {
     return request(app.getHttpServer())
-      .patch('/user/3')
+      .patch(`/user/${mockUser.id}`)
       .send({ name: 'andrew', role: 'USER' })
       .expect(HttpStatus.OK)
       .expect(userService.update());
@@ -71,7 +71,7 @@ describe('UserController (e2e)', () => {
 
   it('/DELETE user', () => {
     return request(app.getHttpServer())
-      .delete('/user/1')
+      .delete(`/user/${mockUser.id}`)
       .expect(HttpStatus.OK)
       .expect(userService.remove());
   });
