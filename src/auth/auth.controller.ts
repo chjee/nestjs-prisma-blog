@@ -11,8 +11,18 @@ import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { SignInUserDto } from './../user/dto/signin-user.dto';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags('User Auth. API')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -20,12 +30,33 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  @ApiOperation({
+    summary: 'User Login',
+    description: 'authenticate a user with username & password.',
+  })
+  @ApiBody({ type: SignInUserDto })
+  @ApiCreatedResponse({
+    schema: {
+      example: {
+        access_token:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhZG1pbi...',
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async login(@Request() req) {
     return this.authService.login(req.user);
   }
 
+  @ApiBearerAuth('access_token')
   @UseGuards(JwtAuthGuard)
+  // @HttpCode(HttpStatus.OK)
   @Get('profile')
+  @ApiOperation({
+    summary: 'User Profile',
+    description: 'get user profile with access token.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   getProfile(@Request() req) {
     return req.user;
   }
