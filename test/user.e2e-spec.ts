@@ -48,7 +48,8 @@ describe('UserController (e2e)', () => {
 
   it('/GET users', () => {
     return request(app.getHttpServer())
-      .get('/user?skip=0&take=3')
+      .get('/user')
+      .query({ skip: 0, take: 3 })
       .expect(HttpStatus.OK)
       .expect(userService.findAll());
   });
