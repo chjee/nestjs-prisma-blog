@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, User } from '@prisma/client';
 
@@ -36,7 +36,7 @@ export class UserService {
   }
 
   async findOne(where: Prisma.UserWhereUniqueInput): Promise<Partial<User>> {
-    return this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       select: {
         id: true,
         username: true,
@@ -47,6 +47,12 @@ export class UserService {
       },
       where,
     });
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
   }
 
   // async findOne(where: Prisma.UserWhereUniqueInput): Promise<User> {
@@ -60,12 +66,18 @@ export class UserService {
   // }
 
   async findUser(username: string): Promise<User> {
-    return this.prisma.user.findFirst({
+    const user = await this.prisma.user.findFirst({
       include: {
         profile: true,
       },
       where: { username: username },
     });
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
   }
 
   async update(params: {
