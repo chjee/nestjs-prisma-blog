@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Post, Prisma } from '@prisma/client';
 
@@ -9,7 +9,7 @@ export class PostService {
     return this.prisma.post.create({ data });
   }
 
-  findAll(params: {
+  async findAll(params: {
     skip?: number;
     take?: number;
     cursor?: Prisma.PostWhereUniqueInput;
@@ -23,24 +23,30 @@ export class PostService {
       cursor,
       where,
       orderBy,
-      // include: {
-      //   user: true,
-      //   categories: true,
-      // },
+      include: {
+        user: { select: { username: true, email: true, role: true } },
+        categories: { select: { name: true } },
+      },
     });
   }
 
-  findOne(where: Prisma.PostWhereUniqueInput): Promise<Post> {
-    return this.prisma.post.findUnique({
+  async findOne(where: Prisma.PostWhereUniqueInput): Promise<Post> {
+    const post = await this.prisma.post.findUnique({
       include: {
-        user: true,
-        categories: true,
+        user: { select: { username: true, email: true, role: true } },
+        categories: { select: { name: true } },
       },
       where,
     });
+
+    if (!post) {
+      throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
+    }
+
+    return post;
   }
 
-  update(params: {
+  async update(params: {
     where: Prisma.PostWhereUniqueInput;
     data: Prisma.PostUpdateInput;
   }): Promise<Post> {
@@ -51,7 +57,7 @@ export class PostService {
     });
   }
 
-  remove(where: Prisma.PostWhereUniqueInput): Promise<Post> {
+  async remove(where: Prisma.PostWhereUniqueInput): Promise<Post> {
     return this.prisma.post.delete({
       where,
     });
