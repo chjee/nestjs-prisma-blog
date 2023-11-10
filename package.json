@@ -1,7 +1,7 @@
 {
   "name": "nestjs-prisma-blog",
   "version": "0.0.1",
-  "description": "NestJS, Prisma, MySQL, Typescript를 이용한 REST API",
+  "description": "NestJS, Prisma, MySQL, Typescript, Jest, Swagger를 이용한 BLOG API",
   "author": "Changhoon Jee <chjee71@gmail.com>",
   "private": true,
   "license": "UNLICENSED",
@@ -9,7 +9,12 @@
     "nestjs",
     "prisma",
     "mysql",
-    "typescript"
+    "typescript",
+    "passport",
+    "jwt",
+    "jest",
+    "supertest",
+    "swagger"
   ],
   "engines": {
     "node": ">=18.17.1",
