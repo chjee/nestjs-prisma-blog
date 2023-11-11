@@ -44,7 +44,7 @@ export class AuthController {
     },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  async login(@Request() req) {
+  async login(@Request() req: any) {
     return this.authService.login(req.user);
   }
 
