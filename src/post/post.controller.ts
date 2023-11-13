@@ -72,7 +72,7 @@ export class PostController {
           published: false,
           userId: 1,
           user: {
-            username: 'Ariadne',
+            name: 'Ariadne',
             email: 'ariadne@prisma.io',
             role: 'USER',
           },
@@ -115,7 +115,7 @@ export class PostController {
         published: false,
         userId: 1,
         user: {
-          username: 'Ariadne',
+          name: 'Ariadne',
           email: 'ariadne@prisma.io',
           role: 'USER',
         },

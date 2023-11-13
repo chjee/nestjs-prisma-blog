@@ -9,8 +9,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.userService.findUser(username);
+  async validateUser(name: string, password: string): Promise<any> {
+    const user = await this.userService.findUser(name);
     if (user && user.password === password) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user;
@@ -21,7 +21,7 @@ export class AuthService {
 
   async login(user: any) {
     // This method is used by JWTStrategy
-    const payload = { username: user.username, sub: user.id };
+    const payload = { name: user.name, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
     };

@@ -24,7 +24,7 @@ export class PostService {
       where,
       orderBy,
       include: {
-        user: { select: { username: true, email: true, role: true } },
+        user: { select: { name: true, email: true, role: true } },
         categories: { select: { name: true } },
       },
     });
@@ -33,7 +33,7 @@ export class PostService {
   async findOne(where: Prisma.PostWhereUniqueInput): Promise<Post> {
     const post = await this.prisma.post.findUnique({
       include: {
-        user: { select: { username: true, email: true, role: true } },
+        user: { select: { name: true, email: true, role: true } },
         categories: { select: { name: true } },
       },
       where,

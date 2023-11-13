@@ -35,7 +35,7 @@ model User {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   email     String   @unique @db.VarChar(80)
-  username  String?  @db.VarChar(60)
+  name      String?  @db.VarChar(60)
   password  String   @db.VarChar(60)
   role      Role     @default(USER)
   posts     Post[]

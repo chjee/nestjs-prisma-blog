@@ -9,7 +9,7 @@ describe('AppController (e2e)', () => {
 
   const mockUser = {
     id: 1,
-    username: 'Alice',
+    name: 'Alice',
     password: 'whoami',
     email: 'alice@prisma.io',
     role: 'USER',
@@ -48,7 +48,7 @@ describe('AppController (e2e)', () => {
     it('POST 200', () => {
       return request(app.getHttpServer())
         .post('/auth/login')
-        .send({ username: mockUser.username, password: mockUser.password })
+        .send({ name: mockUser.name, password: mockUser.password })
         .expect(HttpStatus.OK);
     });
   });
@@ -59,7 +59,7 @@ describe('AppController (e2e)', () => {
         .post('/user')
         .send({
           email: 'andrew@prisma.io',
-          username: 'Andrew',
+          name: 'Andrew',
           password: 'whoami',
           role: 'ADMIN',
         })
@@ -85,7 +85,7 @@ describe('AppController (e2e)', () => {
     it('PATCH', () => {
       return request(app.getHttpServer())
         .patch(`/user/${mockUser.id}`)
-        .send({ username: 'andrew', role: 'USER' })
+        .send({ name: 'andrew', role: 'USER' })
         .expect(HttpStatus.OK);
     });
 

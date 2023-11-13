@@ -32,7 +32,7 @@ export class AuthController {
   @Post('login')
   @ApiOperation({
     summary: 'User Login',
-    description: 'authenticate a user with username & password.',
+    description: 'authenticate a user with name & password.',
   })
   @ApiBody({ type: SignInUserDto })
   @ApiCreatedResponse({

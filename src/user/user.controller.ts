@@ -33,14 +33,14 @@ export class UserController {
   @Post()
   @ApiOperation({
     summary: 'User Create',
-    description: 'create a user with username, password, email, role.',
+    description: 'create a user with name, password, email, role.',
   })
   @ApiBody({ type: CreateUserDto })
   @ApiOkResponse({
     schema: {
       example: {
         id: 4,
-        username: 'Andrew',
+        name: 'Andrew',
         email: 'andrew@prisma.io',
         role: 'ADMIN',
       },
@@ -64,7 +64,7 @@ export class UserController {
       example: [
         {
           id: 1,
-          username: 'Alice',
+          name: 'Alice',
           email: 'alice@prisma.io',
           role: 'USER',
           profile: null,
@@ -104,7 +104,7 @@ export class UserController {
     schema: {
       example: {
         id: 1,
-        username: 'Alice',
+        name: 'Alice',
         email: 'alice@prisma.io',
         role: 'USER',
         profile: null,
@@ -135,12 +135,12 @@ export class UserController {
     description: 'update user with id.',
   })
   @ApiParam({ name: 'id', type: Number, description: 'User ID', example: 4 })
-  @ApiBody({ schema: { example: { username: 'Andrew', role: 'ADMIN' } } })
+  @ApiBody({ schema: { example: { name: 'Andrew', role: 'ADMIN' } } })
   @ApiOkResponse({
     schema: {
       example: {
         id: 4,
-        username: 'Andrew',
+        name: 'Andrew',
         email: 'alice@prisma.io',
         role: 'ADMIN',
       },
@@ -165,7 +165,7 @@ export class UserController {
     schema: {
       example: {
         id: 4,
-        username: 'Andrew',
+        name: 'Andrew',
         email: 'alice@prisma.io',
         role: 'ADMIN',
       },

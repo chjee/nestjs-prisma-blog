@@ -16,7 +16,7 @@ describe('UserController (e2e)', () => {
 
   const mockUser = {
     id: 1,
-    username: 'Alice',
+    name: 'Alice',
     email: 'alice@prisma.io',
     role: 'USER',
   };
@@ -38,7 +38,7 @@ describe('UserController (e2e)', () => {
       .post('/user')
       .send({
         email: 'andrew@prisma.io',
-        username: 'Andrew',
+        name: 'Andrew',
         password: 'whoami',
         role: 'ADMIN',
       })

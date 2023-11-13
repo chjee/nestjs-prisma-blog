@@ -11,7 +11,7 @@ export class SignInUserDto {
   @IsNotEmpty()
   @IsString()
   @Length(5, 20)
-  readonly username!: string;
+  readonly name!: string;
 
   @ApiProperty({
     description: 'User Password',

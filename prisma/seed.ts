@@ -6,7 +6,7 @@ async function main() {
     update: {},
     create: {
       email: 'alice@prisma.io',
-      username: 'Alice',
+      name: 'Alice',
       password: 'whoami',
       posts: {
         create: {
@@ -24,7 +24,7 @@ async function main() {
     update: {},
     create: {
       email: 'bob@prisma.io',
-      username: 'Bob',
+      name: 'Bob',
       password: 'whoami',
       posts: {
         create: [
@@ -51,7 +51,7 @@ async function main() {
     update: {},
     create: {
       email: 'ariadne@prisma.io',
-      username: 'Ariadne',
+      name: 'Ariadne',
       password: 'whoami',
       posts: {
         create: [

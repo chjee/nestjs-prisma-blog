@@ -21,7 +21,7 @@ export class UserService {
     return this.prisma.user.findMany({
       select: {
         id: true,
-        username: true,
+        name: true,
         email: true,
         role: true,
         profile: true,
@@ -39,7 +39,7 @@ export class UserService {
     const user = await this.prisma.user.findUnique({
       select: {
         id: true,
-        username: true,
+        name: true,
         email: true,
         role: true,
         profile: true,
@@ -65,12 +65,12 @@ export class UserService {
   //   });
   // }
 
-  async findUser(username: string): Promise<User> {
+  async findUser(name: string): Promise<User> {
     const user = await this.prisma.user.findFirst({
       include: {
         profile: true,
       },
-      where: { username: username },
+      where: { name: name },
     });
 
     if (!user) {
@@ -88,7 +88,7 @@ export class UserService {
     return this.prisma.user.update({
       select: {
         id: true,
-        username: true,
+        name: true,
         email: true,
         role: true,
       },
@@ -101,7 +101,7 @@ export class UserService {
     return this.prisma.user.delete({
       select: {
         id: true,
-        username: true,
+        name: true,
         email: true,
         role: true,
       },
