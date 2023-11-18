@@ -65,12 +65,12 @@ export class UserService {
   //   });
   // }
 
-  async findUser(name: string): Promise<User> {
-    const user = await this.prisma.user.findFirst({
+  async findUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
+    const user = await this.prisma.user.findUnique({
       include: {
         profile: true,
       },
-      where: { name: name },
+      where,
     });
 
     if (!user) {
