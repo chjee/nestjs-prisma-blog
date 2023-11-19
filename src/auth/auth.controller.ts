@@ -32,7 +32,7 @@ export class AuthController {
   @Post('login')
   @ApiOperation({
     summary: 'User Login',
-    description: 'authenticate a user with name & password.',
+    description: 'authenticate a user with email & password.',
   })
   @ApiBody({ type: SignInUserDto })
   @ApiCreatedResponse({
@@ -50,14 +50,14 @@ export class AuthController {
 
   @ApiBearerAuth('access_token')
   @UseGuards(JwtAuthGuard)
-  // @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.OK)
   @Get('profile')
   @ApiOperation({
     summary: 'User Profile',
     description: 'get user profile with access token.',
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  getProfile(@Request() req) {
+  getProfile(@Request() req: any) {
     return req.user;
   }
 }
