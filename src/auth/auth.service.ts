@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
+// import { SignInUserDto } from 'src/user/dto/signin-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -9,8 +10,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(name: string, password: string): Promise<any> {
-    const user = await this.userService.findUser(name);
+  async validateUser(email: string, password: string): Promise<any> {
+    const user = await this.userService.findUser({
+      email: email,
+    });
     if (user && user.password === password) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user;
