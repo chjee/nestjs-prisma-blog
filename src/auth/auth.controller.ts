@@ -38,8 +38,10 @@ export class AuthController {
   @ApiCreatedResponse({
     schema: {
       example: {
-        access_token:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhZG1pbi...',
+        data: {
+          access_token:
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhZG1pbi...',
+        },
       },
     },
   })

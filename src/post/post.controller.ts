@@ -39,12 +39,14 @@ export class PostController {
   @ApiOkResponse({
     schema: {
       example: {
-        id: 6,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        title: 'Just 10 minutes.',
-        published: false,
-        userId: 1,
+        data: {
+          id: 6,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          title: 'Just 10 minutes.',
+          published: false,
+          userId: 1,
+        },
       },
     },
   })
@@ -63,26 +65,28 @@ export class PostController {
   @ApiQuery({ name: 'take', type: Number, description: 'Take', example: 10 })
   @ApiOkResponse({
     schema: {
-      example: [
-        {
-          id: 6,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          title: 'Just 10 minutes.',
-          published: false,
-          userId: 1,
-          user: {
-            name: 'Ariadne',
-            email: 'ariadne@prisma.io',
-            role: 'USER',
-          },
-          categories: [
-            {
-              name: 'Office',
+      example: {
+        data: [
+          {
+            id: 6,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            title: 'Just 10 minutes.',
+            published: false,
+            userId: 1,
+            user: {
+              name: 'Ariadne',
+              email: 'ariadne@prisma.io',
+              role: 'USER',
             },
-          ],
-        },
-      ],
+            categories: [
+              {
+                name: 'Office',
+              },
+            ],
+          },
+        ],
+      },
     },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -108,22 +112,24 @@ export class PostController {
   @ApiOkResponse({
     schema: {
       example: {
-        id: 6,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        title: 'Just 10 minutes.',
-        published: false,
-        userId: 1,
-        user: {
-          name: 'Ariadne',
-          email: 'ariadne@prisma.io',
-          role: 'USER',
-        },
-        categories: [
-          {
-            name: 'Office',
+        data: {
+          id: 6,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          title: 'Just 10 minutes.',
+          published: false,
+          userId: 1,
+          user: {
+            name: 'Ariadne',
+            email: 'ariadne@prisma.io',
+            role: 'USER',
           },
-        ],
+          categories: [
+            {
+              name: 'Office',
+            },
+          ],
+        },
       },
     },
   })
@@ -149,8 +155,8 @@ export class PostController {
   })
   @ApiOkResponse({
     schema: {
-      example: [
-        {
+      example: {
+        data: {
           id: 6,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -158,7 +164,7 @@ export class PostController {
           published: false,
           userId: 1,
         },
-      ],
+      },
     },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -179,12 +185,14 @@ export class PostController {
   @ApiOkResponse({
     schema: {
       example: {
-        id: 6,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        title: 'Just 10 minutes.',
-        published: false,
-        userId: 1,
+        data: {
+          id: 6,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          title: 'Just 10 minutes.',
+          published: false,
+          userId: 1,
+        },
       },
     },
   })

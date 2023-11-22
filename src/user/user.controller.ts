@@ -39,10 +39,12 @@ export class UserController {
   @ApiOkResponse({
     schema: {
       example: {
-        id: 4,
-        name: 'Andrew',
-        email: 'andrew@prisma.io',
-        role: 'ADMIN',
+        data: {
+          id: 4,
+          name: 'Andrew',
+          email: 'andrew@prisma.io',
+          role: 'ADMIN',
+        },
       },
     },
   })
@@ -61,25 +63,27 @@ export class UserController {
   @ApiQuery({ name: 'take', type: Number, description: 'Take', example: 10 })
   @ApiOkResponse({
     schema: {
-      example: [
-        {
-          id: 1,
-          name: 'Alice',
-          email: 'alice@prisma.io',
-          role: 'USER',
-          profile: null,
-          posts: [
-            {
-              id: 1,
-              createdAt: '2023-11-09T08:52:11.643Z',
-              updatedAt: '2023-11-09T08:52:11.643Z',
-              title: 'Check out Prisma with Nest.js',
-              published: true,
-              userId: 1,
-            },
-          ],
-        },
-      ],
+      example: {
+        data: [
+          {
+            id: 1,
+            name: 'Alice',
+            email: 'alice@prisma.io',
+            role: 'USER',
+            profile: null,
+            posts: [
+              {
+                id: 1,
+                createdAt: '2023-11-09T08:52:11.643Z',
+                updatedAt: '2023-11-09T08:52:11.643Z',
+                title: 'Check out Prisma with Nest.js',
+                published: true,
+                userId: 1,
+              },
+            ],
+          },
+        ],
+      },
     },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -103,21 +107,23 @@ export class UserController {
   @ApiOkResponse({
     schema: {
       example: {
-        id: 1,
-        name: 'Alice',
-        email: 'alice@prisma.io',
-        role: 'USER',
-        profile: null,
-        posts: [
-          {
-            id: 1,
-            createdAt: '2023-11-09T08:52:11.643Z',
-            updatedAt: '2023-11-09T08:52:11.643Z',
-            title: 'Check out Prisma with Nest.js',
-            published: true,
-            userId: 1,
-          },
-        ],
+        data: {
+          id: 1,
+          name: 'Alice',
+          email: 'alice@prisma.io',
+          role: 'USER',
+          profile: null,
+          posts: [
+            {
+              id: 1,
+              createdAt: '2023-11-09T08:52:11.643Z',
+              updatedAt: '2023-11-09T08:52:11.643Z',
+              title: 'Check out Prisma with Nest.js',
+              published: true,
+              userId: 1,
+            },
+          ],
+        },
       },
     },
   })
@@ -139,10 +145,12 @@ export class UserController {
   @ApiOkResponse({
     schema: {
       example: {
-        id: 4,
-        name: 'Andrew',
-        email: 'alice@prisma.io',
-        role: 'ADMIN',
+        data: {
+          id: 4,
+          name: 'Andrew',
+          email: 'alice@prisma.io',
+          role: 'ADMIN',
+        },
       },
     },
   })
@@ -164,10 +172,12 @@ export class UserController {
   @ApiOkResponse({
     schema: {
       example: {
-        id: 4,
-        name: 'Andrew',
-        email: 'alice@prisma.io',
-        role: 'ADMIN',
+        data: {
+          id: 4,
+          name: 'Andrew',
+          email: 'alice@prisma.io',
+          role: 'ADMIN',
+        },
       },
     },
   })
