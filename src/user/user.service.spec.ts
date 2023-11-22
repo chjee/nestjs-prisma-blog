@@ -11,7 +11,7 @@ describe('UserService', () => {
   const user: User = {
     id: 1,
     createdAt: new Date(),
-    email: 'chjee@naver.com',
+    email: 'andrew@prisma.io',
     name: 'Andrew',
     password: '123456',
     role: 'ADMIN',
@@ -66,6 +66,7 @@ describe('UserService', () => {
   describe('update', () => {
     it('should return a user', async () => {
       const updateUserDto: UpdateUserDto = {
+        name: 'Andy',
         role: 'USER',
       };
       jest.spyOn(service, 'update').mockImplementation(async () => user);
