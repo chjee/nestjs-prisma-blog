@@ -1,10 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Post, Prisma } from '@prisma/client';
 
 @Injectable()
 export class PostService {
   constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(PostService.name);
+
   async create(data: Prisma.PostCreateInput): Promise<Post> {
     return this.prisma.post.create({ data });
   }
@@ -40,6 +42,7 @@ export class PostService {
     });
 
     if (!post) {
+      this.logger.error(`Post not found: ${JSON.stringify(where)}`);
       throw new NotFoundException();
     }
 
