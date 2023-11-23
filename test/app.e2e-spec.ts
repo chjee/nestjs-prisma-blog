@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
-import { JwtAuthGuard } from './../src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../src/common/guards/jwt-auth.guard';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
