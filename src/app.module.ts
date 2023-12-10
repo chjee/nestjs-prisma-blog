@@ -12,7 +12,7 @@ import { HealthModule } from './health/health.module';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      envFilePath: '.env.dev, .env',
+      envFilePath: ['.env.dev', '.env'],
     }),
     HealthModule,
     AuthModule,
