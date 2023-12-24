@@ -131,7 +131,7 @@ export class UserController {
   async findOne(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Partial<UserModel>> {
-    return this.userService.findOne({ id });
+    return this.userService.findOne({ id: id });
   }
 
   @ApiBearerAuth('access_token')
