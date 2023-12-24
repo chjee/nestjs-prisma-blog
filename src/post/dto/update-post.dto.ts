@@ -1,7 +1,7 @@
-import { PickType } from '@nestjs/mapped-types';
+import { PartialType, PickType } from '@nestjs/mapped-types';
 import { CreatePostDto } from './create-post.dto';
 
-export class UpdatePostDto extends PickType(CreatePostDto, [
+export class UpdatePostDto extends PickType(PartialType(CreatePostDto), [
   'title',
   'published',
 ] as const) {}
