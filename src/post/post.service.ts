@@ -54,6 +54,13 @@ export class PostService {
     data: Prisma.PostUpdateInput;
   }): Promise<Post> {
     const { where, data } = params;
+    const post = await this.prisma.post.findUnique({ where });
+
+    if (!post) {
+      this.logger.error(`Post not found: ${JSON.stringify(where)}`);
+      throw new NotFoundException();
+    }
+
     return this.prisma.post.update({
       data,
       where,
@@ -61,6 +68,13 @@ export class PostService {
   }
 
   async remove(where: Prisma.PostWhereUniqueInput): Promise<Post> {
+    const post = await this.prisma.post.findUnique({ where });
+
+    if (!post) {
+      this.logger.error(`Post not found: ${JSON.stringify(where)}`);
+      throw new NotFoundException();
+    }
+
     return this.prisma.post.delete({
       where,
     });

@@ -88,6 +88,15 @@ export class UserService {
     data: Prisma.UserUpdateInput;
   }): Promise<Partial<User>> {
     const { where, data } = params;
+    const user = await this.prisma.user.findUnique({
+      where,
+    });
+
+    if (!user) {
+      this.logger.error(`User not found: ${JSON.stringify(where)}`);
+      throw new NotFoundException();
+    }
+
     return this.prisma.user.update({
       select: {
         id: true,
@@ -101,6 +110,15 @@ export class UserService {
   }
 
   async remove(where: Prisma.UserWhereUniqueInput): Promise<Partial<User>> {
+    const user = await this.prisma.user.findUnique({
+      where,
+    });
+
+    if (!user) {
+      this.logger.error(`User not found: ${JSON.stringify(where)}`);
+      throw new NotFoundException();
+    }
+
     return this.prisma.user.delete({
       select: {
         id: true,
