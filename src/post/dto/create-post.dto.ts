@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
+  IsOptional,
   IsNotEmpty,
   IsNumber,
   IsString,
@@ -19,6 +20,15 @@ export class CreatePostDto {
   @IsString()
   @Length(2, 60)
   readonly title: string;
+
+  @ApiProperty({
+    description: 'Post Content',
+    example: 'A short body for the blog post.',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  readonly content?: string;
 
   @ApiProperty({
     description: 'published or not',

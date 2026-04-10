@@ -7,6 +7,7 @@ import { UpdatePostDto } from './../../post/dto/update-post.dto';
 export const post: Post = {
   id: 1,
   title: 'Test Post',
+  content: 'Test post body',
   published: false,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -16,6 +17,7 @@ export const posts: Post[] = [post];
 
 export const createPostDto: CreatePostDto = {
   title: 'Just 10 minutes.',
+  content: 'A short body for the blog post.',
   published: false,
   userId: 1,
   user: {
@@ -27,6 +29,7 @@ export const createPostDto: CreatePostDto = {
 
 export const updatePostDto: UpdatePostDto = {
   title: 'Just 5 minutes.',
+  content: 'Updated body',
   published: true,
 };
 
