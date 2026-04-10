@@ -11,6 +11,8 @@ async function main() {
       posts: {
         create: {
           title: 'Check out Prisma with Nest.js',
+          content:
+            'Prisma and Nest.js work well together for quickly building typed APIs.',
           published: true,
           categories: {
             create: [{ name: 'Prisma' }, { name: 'Nest.js' }],
@@ -30,6 +32,7 @@ async function main() {
         create: [
           {
             title: 'Follow Prisma on Twitter',
+            content: 'Prisma shares release notes, guides, and community updates.',
             published: true,
             categories: {
               create: { name: 'Twitter' },
@@ -37,6 +40,8 @@ async function main() {
           },
           {
             title: 'Follow Nexus on Twitter',
+            content:
+              'Nexus posts ecosystem news and practical GraphQL development tips.',
             published: true,
             categories: {
               create: { name: 'Nexus' },
@@ -57,6 +62,8 @@ async function main() {
         create: [
           {
             title: 'My first day at Prisma',
+            content:
+              'A short diary entry about onboarding, teammates, and the office setup.',
             published: true,
             categories: {
               create: { name: 'Office' },
@@ -64,6 +71,8 @@ async function main() {
           },
           {
             title: 'How to connect to a SQLite database',
+            content:
+              'A walkthrough for configuring a SQLite datasource and first query.',
             published: true,
             categories: {
               create: [{ name: 'Databases' }, { name: 'Tutorials' }],

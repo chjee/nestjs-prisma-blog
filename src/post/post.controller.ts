@@ -1,5 +1,6 @@
 import {
   Controller,
+  DefaultValuePipe,
   Get,
   Post,
   Body,
@@ -44,6 +45,7 @@ export class PostController {
           createdAt: new Date(),
           updatedAt: new Date(),
           title: 'Just 10 minutes.',
+          content: 'A short body for the blog post.',
           published: false,
           userId: 1,
         },
@@ -72,6 +74,7 @@ export class PostController {
             createdAt: new Date(),
             updatedAt: new Date(),
             title: 'Just 10 minutes.',
+            content: 'A short body for the blog post.',
             published: false,
             userId: 1,
             user: {
@@ -91,8 +94,8 @@ export class PostController {
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async findAll(
-    @Query('skip', ParseIntPipe) skip: number,
-    @Query('take', ParseIntPipe) take: number,
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
+    @Query('take', new DefaultValuePipe(20), ParseIntPipe) take: number,
   ): Promise<PostModel[]> {
     return this.postService.findAll({
       skip: skip,
@@ -117,6 +120,7 @@ export class PostController {
           createdAt: new Date(),
           updatedAt: new Date(),
           title: 'Just 10 minutes.',
+          content: 'A short body for the blog post.',
           published: false,
           userId: 1,
           user: {
@@ -149,6 +153,7 @@ export class PostController {
     schema: {
       example: {
         title: 'Just 10 minutes.',
+        content: 'A short body for the blog post.',
         published: false,
       },
     },
@@ -161,6 +166,7 @@ export class PostController {
           createdAt: new Date(),
           updatedAt: new Date(),
           title: 'Just 10 minutes.',
+          content: 'A short body for the blog post.',
           published: false,
           userId: 1,
         },
@@ -190,6 +196,7 @@ export class PostController {
           createdAt: new Date(),
           updatedAt: new Date(),
           title: 'Just 10 minutes.',
+          content: 'A short body for the blog post.',
           published: false,
           userId: 1,
         },

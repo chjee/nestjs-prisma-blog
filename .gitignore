@@ -2,6 +2,10 @@
 /dist
 /node_modules
 
+# omx / agent state
+.omx/
+docs/
+
 # Logs
 logs
 *.log
@@ -35,4 +39,4 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # environment
-.env*
+.env*.codex

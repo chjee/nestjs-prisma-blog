@@ -20,6 +20,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('auth')
 @ApiTags('User Auth. API')
@@ -28,7 +29,7 @@ export class AuthController {
 
   @Public()
   @HttpCode(HttpStatus.OK)
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(ThrottlerGuard, LocalAuthGuard)
   @Post('login')
   @ApiOperation({
     summary: 'User Login',
