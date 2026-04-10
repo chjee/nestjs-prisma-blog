@@ -17,6 +17,7 @@ describe('PostController (e2e)', () => {
   const mockPost = {
     id: 1,
     title: 'Check out Prisma with Nest.js',
+    content: 'Prisma and Nest.js work well together.',
     published: false,
     createdAt: '2023-11-05T13:09:13.135Z',
     updatedAt: '2023-11-05T13:09:13.135Z',
@@ -40,6 +41,7 @@ describe('PostController (e2e)', () => {
       .post('/post')
       .send({
         title: 'Just 10 minutes.',
+        content: 'A short body for the blog post.',
         published: false,
         userId: 1,
       })
@@ -65,7 +67,11 @@ describe('PostController (e2e)', () => {
   it('/PATCH post', () => {
     return request(app.getHttpServer())
       .patch(`/post/${mockPost.id}`)
-      .send({ name: 'andrew', role: 'USER' })
+      .send({
+        title: 'Updated title',
+        content: 'Updated body',
+        published: true,
+      })
       .expect(HttpStatus.OK)
       .expect(postService.update());
   });

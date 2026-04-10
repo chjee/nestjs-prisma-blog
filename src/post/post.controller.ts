@@ -45,6 +45,7 @@ export class PostController {
           createdAt: new Date(),
           updatedAt: new Date(),
           title: 'Just 10 minutes.',
+          content: 'A short body for the blog post.',
           published: false,
           userId: 1,
         },
@@ -73,6 +74,7 @@ export class PostController {
             createdAt: new Date(),
             updatedAt: new Date(),
             title: 'Just 10 minutes.',
+            content: 'A short body for the blog post.',
             published: false,
             userId: 1,
             user: {
@@ -118,6 +120,7 @@ export class PostController {
           createdAt: new Date(),
           updatedAt: new Date(),
           title: 'Just 10 minutes.',
+          content: 'A short body for the blog post.',
           published: false,
           userId: 1,
           user: {
@@ -150,6 +153,7 @@ export class PostController {
     schema: {
       example: {
         title: 'Just 10 minutes.',
+        content: 'A short body for the blog post.',
         published: false,
       },
     },
@@ -162,6 +166,7 @@ export class PostController {
           createdAt: new Date(),
           updatedAt: new Date(),
           title: 'Just 10 minutes.',
+          content: 'A short body for the blog post.',
           published: false,
           userId: 1,
         },
@@ -191,6 +196,7 @@ export class PostController {
           createdAt: new Date(),
           updatedAt: new Date(),
           title: 'Just 10 minutes.',
+          content: 'A short body for the blog post.',
           published: false,
           userId: 1,
         },

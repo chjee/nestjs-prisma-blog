@@ -18,10 +18,14 @@ model Post {
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   title      String
+  content    String?    @db.Text
   published  Boolean    @default(false)
   user       User       @relation(fields: [userId], references: [id])
   userId     Int
   categories Category[]
+
+  @@index([userId])
+  @@index([published, createdAt])
 }
 
 model Profile {
