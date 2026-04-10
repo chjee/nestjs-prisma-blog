@@ -4,13 +4,19 @@ import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'verbose', 'debug'],
-    cors: { origin: '*', methods: 'GET,HEAD,PUT,PATCH,POST,DELETE' },
+    cors: {
+      origin:
+        process.env.ALLOWED_ORIGINS?.split(',') ?? ['http://localhost:3000'],
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    },
   });
 
+  app.use(helmet());
   app.useGlobalInterceptors(new TransformInterceptor());
 
   app.useGlobalPipes(
