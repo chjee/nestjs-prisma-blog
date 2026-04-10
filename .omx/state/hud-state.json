@@ -1,5 +1,0 @@
-{
-  "last_turn_at": "2026-04-10T05:37:42.367Z",
-  "turn_count": 1,
-  "last_agent_output": "막혔습니다.\n\n이 환경에선:\n- 파일시스템이 `read-only`라 코드 수정/`npm install` 불가\n- 셸 네트워크가 막혀 있어 `git pull/push`, `gh pr"
-}
