@@ -12,7 +12,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   @Length(4, 60)
-  readonly name: string;
+  readonly name!: string;
 
   @ApiProperty({
     description: 'User Password',
@@ -23,7 +23,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   @Length(6, 60)
-  readonly password: string;
+  readonly password!: string;
 
   @ApiProperty({
     description: 'User Email',
@@ -34,7 +34,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsEmail()
   @Length(6, 60)
-  readonly email: string;
+  readonly email!: string;
 
   @ApiProperty({
     description: 'User Role',
@@ -43,5 +43,5 @@ export class CreateUserDto {
   })
   @IsString()
   @IsEnum(['ADMIN', 'USER'])
-  readonly role: $Enums.Role;
+  readonly role!: $Enums.Role;
 }
