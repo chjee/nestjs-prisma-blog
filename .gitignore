@@ -2,6 +2,10 @@
 /dist
 /node_modules
 
+# omx / agent state
+.omx/
+docs/
+
 # Logs
 logs
 *.log
