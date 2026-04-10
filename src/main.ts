@@ -10,8 +10,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'verbose', 'debug'],
     cors: {
-      origin:
-        process.env.ALLOWED_ORIGINS?.split(',') ?? ['http://localhost:3000'],
+      origin: process.env.ALLOWED_ORIGINS?.split(',') ?? [
+        'http://localhost:3000',
+      ],
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     },
   });
