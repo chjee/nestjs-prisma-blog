@@ -3,21 +3,30 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import {
+  WINSTON_MODULE_NEST_PROVIDER,
+  WINSTON_MODULE_PROVIDER,
+} from 'nest-winston';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: ['error', 'warn', 'log', 'verbose', 'debug'],
     cors: {
-      origin:
-        process.env.ALLOWED_ORIGINS?.split(',') ?? ['http://localhost:3000'],
+      origin: process.env.ALLOWED_ORIGINS?.split(',') ?? [
+        'http://localhost:3000',
+      ],
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     },
   });
 
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   app.use(helmet());
-  app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalInterceptors(
+    new LoggingInterceptor(app.get(WINSTON_MODULE_PROVIDER)),
+    new TransformInterceptor(),
+  );
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -56,7 +65,9 @@ async function bootstrap() {
   const configService = app.get<ConfigService>(ConfigService);
   const listenPort = configService.get<number>('PORT', 3000);
   await app.listen(listenPort);
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  app
+    .get(WINSTON_MODULE_NEST_PROVIDER)
+    .log(`Application is running on: ${await app.getUrl()}`);
 }
 
 bootstrap();
