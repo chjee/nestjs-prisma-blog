@@ -1,5 +1,6 @@
 import {
   Controller,
+  DefaultValuePipe,
   Get,
   Post,
   Body,
@@ -91,8 +92,8 @@ export class PostController {
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async findAll(
-    @Query('skip', ParseIntPipe) skip: number,
-    @Query('take', ParseIntPipe) take: number,
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
+    @Query('take', new DefaultValuePipe(20), ParseIntPipe) take: number,
   ): Promise<PostModel[]> {
     return this.postService.findAll({
       skip: skip,
