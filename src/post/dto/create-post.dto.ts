@@ -18,14 +18,14 @@ export class CreatePostDto {
   @IsNotEmpty()
   @IsString()
   @Length(2, 60)
-  readonly title: string;
+  readonly title!: string;
 
   @ApiProperty({
     description: 'published or not',
     example: false,
   })
   @IsBoolean()
-  readonly published: boolean;
+  readonly published!: boolean;
 
   @ApiProperty({
     description: 'Post User Id',
@@ -35,9 +35,9 @@ export class CreatePostDto {
   @IsNotEmpty()
   @IsNumber()
   @Min(1)
-  readonly userId: number;
+  readonly userId!: number;
 
-  readonly user: {
+  readonly user!: {
     connect: {
       id: number;
     };
