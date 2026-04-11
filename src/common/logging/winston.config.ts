@@ -2,9 +2,17 @@ import { utilities as nestWinstonModuleUtilities } from 'nest-winston';
 import { WinstonModuleOptions } from 'nest-winston';
 import * as path from 'node:path';
 import * as winston from 'winston';
-import DailyRotateFile from 'winston-daily-rotate-file';
+import 'winston-daily-rotate-file';
 import { getRequestId } from './request-context';
 import { maskSensitiveData } from './mask.util';
+
+type DailyRotateFileTransportOptions = Record<string, unknown>;
+type DailyRotateFileTransportConstructor = new (
+  options: DailyRotateFileTransportOptions,
+) => winston.transport;
+
+const DailyRotateFileTransport = winston.transports
+  .DailyRotateFile as unknown as DailyRotateFileTransportConstructor;
 
 const addRequestContext = winston.format((info) => {
   const requestId = getRequestId();
@@ -61,7 +69,7 @@ export function createWinstonOptions(params: {
         level,
         format: createConsoleFormat(nodeEnv),
       }),
-      new DailyRotateFile({
+      new DailyRotateFileTransport({
         dirname: logDir,
         filename: 'application-%DATE%.log',
         datePattern: 'YYYY-MM-DD',
@@ -75,7 +83,7 @@ export function createWinstonOptions(params: {
           winston.format.json(),
         ),
       }),
-      new DailyRotateFile({
+      new DailyRotateFileTransport({
         dirname: logDir,
         filename: 'error-%DATE%.log',
         datePattern: 'YYYY-MM-DD',

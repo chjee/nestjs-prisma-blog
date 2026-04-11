@@ -5,6 +5,8 @@
 # omx / agent state
 .omx/
 docs/
+!docs/
+!docs/INFRA_nestjs-prisma-blog-integration-plan.md
 
 # Logs
 logs
@@ -40,6 +42,7 @@ lerna-debug.log*
 
 # environment
 .env*.codex
+.env
 
 # Claude Code
 .claude/
