@@ -57,7 +57,7 @@ export class UserController {
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async create(@Body() createUserDto: CreateUserDto): Promise<UserModel> {
-    return this.userService.create(createUserDto);
+    return this.userService.create({ ...createUserDto, role: 'USER' });
   }
 
   @ApiBearerAuth('access_token')
