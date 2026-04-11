@@ -4,6 +4,7 @@
 
 # omx / agent state
 .omx/
+docs/
 
 # Logs
 logs
