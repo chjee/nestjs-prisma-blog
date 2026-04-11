@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { requestContext } from '../logging/request-context';
+import { maskSensitiveData } from '../logging/mask.util';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
@@ -26,7 +27,7 @@ export class LoggerMiddleware implements NestMiddleware {
         userAgent: req.get('user-agent'),
         params: req.params,
         query: req.query,
-        body: req.body,
+        body: maskSensitiveData(req.body),
       });
       next();
     });
