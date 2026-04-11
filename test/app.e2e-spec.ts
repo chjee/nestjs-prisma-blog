@@ -55,7 +55,7 @@ describe('AppController (e2e)', () => {
     it('POST 200', () => {
       return request(app.getHttpServer())
         .post('/auth/login')
-        .send({ name: mockUser.name, password: mockUser.password })
+        .send({ email: mockUser.email, password: mockUser.password })
         .expect(HttpStatus.OK);
     });
   });
