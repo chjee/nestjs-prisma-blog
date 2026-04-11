@@ -1,19 +1,16 @@
 import {
+  Body,
   Controller,
   DefaultValuePipe,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
   Delete,
+  Get,
+  Param,
   ParseIntPipe,
+  Patch,
+  Post,
   Query,
 } from '@nestjs/common';
-import { PostService } from './post.service';
 import { Post as PostModel } from '@prisma/client';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -24,6 +21,14 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
+import { PostService } from './post.service';
+
+type PaginatedPostsResponse = {
+  data: PostModel[];
+  total: number;
+};
 
 @Controller('post')
 @ApiTags('Post API')
@@ -89,6 +94,7 @@ export class PostController {
             ],
           },
         ],
+        total: 42,
       },
     },
   })
@@ -96,13 +102,18 @@ export class PostController {
   async findAll(
     @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
     @Query('take', new DefaultValuePipe(20), ParseIntPipe) take: number,
-  ): Promise<PostModel[]> {
-    return this.postService.findAll({
-      skip: skip,
-      take: take,
-      // where: { published: true },
-      // orderBy: { createdAt: 'desc' },
-    });
+  ): Promise<PaginatedPostsResponse> {
+    const [data, total] = await Promise.all([
+      this.postService.findAll({
+        skip,
+        take,
+        // where: { published: true },
+        // orderBy: { createdAt: 'desc' },
+      }),
+      this.postService.count(),
+    ]);
+
+    return { data, total };
   }
 
   @ApiBearerAuth('access_token')
@@ -139,7 +150,7 @@ export class PostController {
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<PostModel> {
-    return this.postService.findOne({ id: id });
+    return this.postService.findOne({ id });
   }
 
   @ApiBearerAuth('access_token')
@@ -178,7 +189,7 @@ export class PostController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePostDto: UpdatePostDto,
   ): Promise<PostModel> {
-    return this.postService.update({ where: { id: id }, data: updatePostDto });
+    return this.postService.update({ where: { id }, data: updatePostDto });
   }
 
   @ApiBearerAuth('access_token')
@@ -204,7 +215,7 @@ export class PostController {
     },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<any> {
-    return this.postService.remove({ id: id });
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<PostModel> {
+    return this.postService.remove({ id });
   }
 }

@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
 import { PrismaService } from '../prisma/prisma.service';
 import {
-  user,
-  users,
   createUserDto,
   updateUserDto,
+  user,
+  users,
 } from '../common/constants/jest.constants';
+import { UserController } from './user.controller';
+import { UserService } from './user.service';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -21,8 +21,6 @@ describe('UserController', () => {
 
     controller = moduleRef.get<UserController>(UserController);
     service = moduleRef.get<UserService>(UserService);
-    // controller = await moduleRef.resolve<UserController>(UserController);
-    // service = await moduleRef.resolve<UserService>(UserService);
   });
 
   describe('create', () => {
@@ -33,10 +31,14 @@ describe('UserController', () => {
   });
 
   describe('findAll', () => {
-    it('should return an array of users', async () => {
-      // jest.spyOn(service, 'findAll').mockResolvedValue(users);
+    it('should return paginated users with a total count', async () => {
       jest.spyOn(service, 'findAll').mockImplementation(async () => users);
-      expect(await controller.findAll(0, 2)).toBe(users);
+      jest.spyOn(service, 'count').mockResolvedValue(2);
+
+      await expect(controller.findAll(0, 2)).resolves.toEqual({
+        data: users,
+        total: 2,
+      });
     });
   });
 

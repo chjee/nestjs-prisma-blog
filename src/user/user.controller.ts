@@ -1,18 +1,15 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
   ParseIntPipe,
+  Patch,
+  Post,
   Query,
 } from '@nestjs/common';
-import { UserService } from './user.service';
 import { User as UserModel } from '@prisma/client';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -23,6 +20,14 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserService } from './user.service';
+
+type PaginatedUsersResponse = {
+  data: Partial<UserModel>[];
+  total: number;
+};
 
 @Controller('user')
 @ApiTags('User API')
@@ -83,6 +88,7 @@ export class UserController {
             ],
           },
         ],
+        total: 12,
       },
     },
   })
@@ -90,11 +96,13 @@ export class UserController {
   async findAll(
     @Query('skip', ParseIntPipe) skip: number,
     @Query('take', ParseIntPipe) take: number,
-  ): Promise<Partial<UserModel>[]> {
-    return this.userService.findAll({
-      skip: skip,
-      take: take,
-    });
+  ): Promise<PaginatedUsersResponse> {
+    const [data, total] = await Promise.all([
+      this.userService.findAll({ skip, take }),
+      this.userService.count(),
+    ]);
+
+    return { data, total };
   }
 
   @ApiBearerAuth('access_token')
@@ -131,7 +139,7 @@ export class UserController {
   async findOne(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Partial<UserModel>> {
-    return this.userService.findOne({ id: id });
+    return this.userService.findOne({ id });
   }
 
   @ApiBearerAuth('access_token')
@@ -159,7 +167,7 @@ export class UserController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<Partial<UserModel>> {
-    return this.userService.update({ where: { id: id }, data: updateUserDto });
+    return this.userService.update({ where: { id }, data: updateUserDto });
   }
 
   @ApiBearerAuth('access_token')
@@ -182,7 +190,9 @@ export class UserController {
     },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<any> {
-    return this.userService.remove({ id: id });
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Partial<UserModel>> {
+    return this.userService.remove({ id });
   }
 }

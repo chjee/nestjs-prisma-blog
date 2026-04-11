@@ -1,24 +1,24 @@
-import * as request from 'supertest';
-import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import * as request from 'supertest';
 import { UserModule } from '../src/user/user.module';
 import { UserService } from '../src/user/user.service';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
-  const userService = {
-    create: () => mockUser,
-    findAll: () => [mockUser, mockUser],
-    findOne: () => mockUser,
-    update: () => mockUser,
-    remove: () => mockUser,
-  };
-
   const mockUser = {
     id: 1,
     name: 'Alice',
     email: 'alice@prisma.io',
     role: 'USER',
+  };
+  const userService = {
+    create: () => mockUser,
+    findAll: () => [mockUser, mockUser],
+    count: () => 2,
+    findOne: () => mockUser,
+    update: () => mockUser,
+    remove: () => mockUser,
   };
 
   beforeAll(async () => {
@@ -46,15 +46,15 @@ describe('UserController (e2e)', () => {
       .expect(userService.create());
   });
 
-  it('/GET users', () => {
+  it('/GET user', () => {
     return request(app.getHttpServer())
       .get('/user')
       .query({ skip: 0, take: 3 })
       .expect(HttpStatus.OK)
-      .expect(userService.findAll());
+      .expect({ data: userService.findAll(), total: userService.count() });
   });
 
-  it('/GET user', () => {
+  it('/GET user/:id', () => {
     return request(app.getHttpServer())
       .get(`/user/${mockUser.id}`)
       .expect(HttpStatus.OK)
