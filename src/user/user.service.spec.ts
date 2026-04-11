@@ -1,58 +1,168 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UserService } from './user.service';
+import { NotFoundException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import {
-  user,
-  users,
   createUserDto,
   updateUserDto,
+  user,
+  users,
 } from '../common/constants/jest.constants';
+import { UserService } from './user.service';
+
+type MockPrismaUserDelegate = {
+  create: jest.Mock;
+  findMany: jest.Mock;
+  findUnique: jest.Mock;
+  update: jest.Mock;
+  delete: jest.Mock;
+};
 
 describe('UserService', () => {
+  let prisma: PrismaService & { user: MockPrismaUserDelegate };
   let service: UserService;
 
-  beforeEach(async () => {
-    const moduleRef: TestingModule = await Test.createTestingModule({
-      providers: [PrismaService, UserService],
-    }).compile();
+  beforeEach(() => {
+    prisma = {
+      user: {
+        create: jest.fn(),
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
+      },
+    } as unknown as PrismaService & { user: MockPrismaUserDelegate };
 
-    service = moduleRef.get<UserService>(UserService);
+    service = new UserService(prisma);
   });
 
   describe('create', () => {
-    it('should return a user', async () => {
-      jest.spyOn(service, 'create').mockImplementation(async () => user);
-      expect(await service.create(createUserDto)).toBe(user);
+    it('hashes the password before creating a user', async () => {
+      prisma.user.create.mockResolvedValue(user);
+      const hashSpy = jest
+        .spyOn(bcrypt, 'hash')
+        .mockResolvedValue('hashed-password' as never);
+
+      await expect(service.create(createUserDto)).resolves.toBe(user);
+      expect(hashSpy).toHaveBeenCalledWith(createUserDto.password, 10);
+      expect(prisma.user.create).toHaveBeenCalledWith({
+        data: { ...createUserDto, password: 'hashed-password' },
+      });
     });
   });
 
   describe('findAll', () => {
-    it('should return an array of users', async () => {
-      jest.spyOn(service, 'findAll').mockImplementation(async () => users);
-      expect(await service.findAll({ skip: 0, take: 3 })).toBe(users);
+    it('returns users with related profile and posts data', async () => {
+      prisma.user.findMany.mockResolvedValue(users);
+
+      await expect(service.findAll({ skip: 0, take: 3 })).resolves.toBe(users);
+      expect(prisma.user.findMany).toHaveBeenCalledWith({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          profile: true,
+          posts: true,
+        },
+        skip: 0,
+        take: 3,
+        cursor: undefined,
+        where: undefined,
+        orderBy: undefined,
+      });
     });
   });
 
   describe('findOne', () => {
-    it('should return a user', async () => {
-      jest.spyOn(service, 'findOne').mockImplementation(async () => user);
-      expect(await service.findOne({ id: 1 })).toBe(user);
+    it('returns a user when it exists', async () => {
+      prisma.user.findUnique.mockResolvedValue(user);
+
+      await expect(service.findOne({ id: 1 })).resolves.toBe(user);
+    });
+
+    it('throws when the user does not exist', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(service.findOne({ id: 999 })).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
+    });
+  });
+
+  describe('findUser', () => {
+    it('returns a user with profile data when it exists', async () => {
+      prisma.user.findUnique.mockResolvedValue(user);
+
+      await expect(service.findUser({ id: 1 })).resolves.toBe(user);
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({
+        include: {
+          profile: true,
+        },
+        where: { id: 1 },
+      });
+    });
+
+    it('throws when the auth lookup user does not exist', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.findUser({ email: 'missing@prisma.io' }),
+      ).rejects.toBeInstanceOf(NotFoundException);
     });
   });
 
   describe('update', () => {
-    it('should return a user', async () => {
-      jest.spyOn(service, 'update').mockImplementation(async () => user);
-      expect(
-        await service.update({ where: { id: 1 }, data: updateUserDto }),
-      ).toBe(user);
+    it('updates a user when it exists', async () => {
+      prisma.user.findUnique.mockResolvedValue(user);
+      prisma.user.update.mockResolvedValue(user);
+
+      await expect(
+        service.update({ where: { id: 1 }, data: updateUserDto }),
+      ).resolves.toBe(user);
+      expect(prisma.user.update).toHaveBeenCalledWith({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+        data: updateUserDto,
+        where: { id: 1 },
+      });
+    });
+
+    it('throws when the user to update does not exist', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.update({ where: { id: 999 }, data: updateUserDto }),
+      ).rejects.toBeInstanceOf(NotFoundException);
     });
   });
 
   describe('remove', () => {
-    it('should return a user', async () => {
-      jest.spyOn(service, 'remove').mockImplementation(async () => user);
-      expect(await service.remove({ id: 1 })).toBe(user);
+    it('deletes a user when it exists', async () => {
+      prisma.user.findUnique.mockResolvedValue(user);
+      prisma.user.delete.mockResolvedValue(user);
+
+      await expect(service.remove({ id: 1 })).resolves.toBe(user);
+      expect(prisma.user.delete).toHaveBeenCalledWith({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+        where: { id: 1 },
+      });
+    });
+
+    it('throws when the user to delete does not exist', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(service.remove({ id: 999 })).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
     });
   });
 });
