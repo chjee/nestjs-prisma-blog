@@ -1,19 +1,16 @@
 import {
+  Body,
   Controller,
   DefaultValuePipe,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
   Delete,
+  Get,
+  Param,
   ParseIntPipe,
+  Patch,
+  Post,
   Query,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { User as UserModel } from '@prisma/client';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Role, User as UserModel } from '@prisma/client';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -24,6 +21,10 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { User } from '../common/decorators/user.decorator';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserService } from './user.service';
 
 @Controller('user')
 @ApiTags('User API')
@@ -132,7 +133,7 @@ export class UserController {
   async findOne(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Partial<UserModel>> {
-    return this.userService.findOne({ id: id });
+    return this.userService.findOne({ id });
   }
 
   @ApiBearerAuth('access_token')
@@ -159,8 +160,15 @@ export class UserController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
+    @User('sub') requesterId: number,
+    @User('role') requesterRole: Role,
   ): Promise<Partial<UserModel>> {
-    return this.userService.update({ where: { id: id }, data: updateUserDto });
+    this.userService.assertOwnerOrAdmin(id, requesterId, requesterRole);
+
+    return this.userService.update({
+      where: { id },
+      data: this.sanitizeUpdateUserDto(updateUserDto, requesterRole),
+    });
   }
 
   @ApiBearerAuth('access_token')
@@ -183,7 +191,27 @@ export class UserController {
     },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<any> {
-    return this.userService.remove({ id: id });
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+    @User('sub') requesterId: number,
+    @User('role') requesterRole: Role,
+  ): Promise<Partial<UserModel>> {
+    this.userService.assertOwnerOrAdmin(id, requesterId, requesterRole);
+
+    return this.userService.remove({ id });
+  }
+
+  private sanitizeUpdateUserDto(
+    updateUserDto: UpdateUserDto,
+    requesterRole: Role,
+  ): UpdateUserDto {
+    if (requesterRole === 'ADMIN') {
+      return updateUserDto;
+    }
+
+    const safeUpdateUserDto = { ...updateUserDto };
+    delete safeUpdateUserDto.role;
+
+    return safeUpdateUserDto;
   }
 }

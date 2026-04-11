@@ -30,7 +30,13 @@ describe('AppController (e2e)', () => {
       imports: [AppModule],
     })
       .overrideProvider(JwtAuthGuard)
-      .useValue({ canActivate: () => true })
+      .useValue({
+        canActivate: (context: any) => {
+          const request = context.switchToHttp().getRequest();
+          request.user = { sub: 1, name: 'Alice', role: 'ADMIN' };
+          return true;
+        },
+      })
       .compile();
 
     app = moduleFixture.createNestApplication();

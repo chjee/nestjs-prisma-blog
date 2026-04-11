@@ -1,6 +1,11 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Post, Prisma } from '@prisma/client';
+import { Post, Prisma, Role } from '@prisma/client';
 
 @Injectable()
 export class PostService {
@@ -47,6 +52,30 @@ export class PostService {
     }
 
     return post;
+  }
+
+  async assertOwnerOrAdmin(
+    postId: number,
+    requesterId: number,
+    requesterRole: Role,
+  ): Promise<void> {
+    if (requesterRole === 'ADMIN') {
+      return;
+    }
+
+    const post = await this.prisma.post.findUnique({
+      select: { userId: true },
+      where: { id: postId },
+    });
+
+    if (!post) {
+      this.logger.error(`Post not found: ${JSON.stringify({ id: postId })}`);
+      throw new NotFoundException();
+    }
+
+    if (post.userId !== requesterId) {
+      throw new ForbiddenException('You can only manage your own posts.');
+    }
   }
 
   async update(params: {

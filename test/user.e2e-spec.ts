@@ -1,17 +1,19 @@
 import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
 import { UserModule } from '../src/user/user.module';
 import { UserService } from '../src/user/user.service';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
   const userService = {
-    create: () => mockUser,
-    findAll: () => [mockUser, mockUser],
-    findOne: () => mockUser,
-    update: () => mockUser,
-    remove: () => mockUser,
+    create: jest.fn(() => mockUser),
+    findAll: jest.fn(() => [mockUser, mockUser]),
+    findOne: jest.fn(() => mockUser),
+    assertOwnerOrAdmin: jest.fn(() => undefined),
+    update: jest.fn(() => mockUser),
+    remove: jest.fn(() => mockUser),
   };
 
   const mockUser = {
@@ -20,6 +22,10 @@ describe('UserController (e2e)', () => {
     email: 'alice@prisma.io',
     role: 'USER',
   };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   beforeAll(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
@@ -30,6 +36,10 @@ describe('UserController (e2e)', () => {
       .compile();
 
     app = moduleRef.createNestApplication();
+    app.use((req: Request, _res: Response, next: NextFunction) => {
+      req.user = { sub: 1, role: 'USER' };
+      next();
+    });
     await app.init();
   });
 
@@ -68,12 +78,17 @@ describe('UserController (e2e)', () => {
       .expect(userService.findOne());
   });
 
-  it('/PATCH user', () => {
-    return request(app.getHttpServer())
+  it('/PATCH user strips role changes for non-admins', async () => {
+    await request(app.getHttpServer())
       .patch(`/user/${mockUser.id}`)
-      .send({ name: 'andrew', role: 'USER' })
+      .send({ name: 'andrew', role: 'ADMIN' })
       .expect(HttpStatus.OK)
       .expect(userService.update());
+
+    expect(userService.update).toHaveBeenCalledWith({
+      where: { id: mockUser.id },
+      data: { name: 'andrew' },
+    });
   });
 
   it('/DELETE user', () => {

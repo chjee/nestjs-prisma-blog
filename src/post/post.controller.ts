@@ -1,19 +1,16 @@
 import {
+  Body,
   Controller,
   DefaultValuePipe,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
   Delete,
+  Get,
+  Param,
   ParseIntPipe,
+  Patch,
+  Post,
   Query,
 } from '@nestjs/common';
-import { PostService } from './post.service';
-import { Post as PostModel } from '@prisma/client';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { Post as PostModel, Role } from '@prisma/client';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -24,6 +21,10 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { User } from '../common/decorators/user.decorator';
+import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
+import { PostService } from './post.service';
 
 @Controller('post')
 @ApiTags('Post API')
@@ -175,7 +176,11 @@ export class PostController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePostDto: UpdatePostDto,
+    @User('sub') requesterId: number,
+    @User('role') requesterRole: Role,
   ): Promise<PostModel> {
+    await this.postService.assertOwnerOrAdmin(id, requesterId, requesterRole);
+
     return this.postService.update({ where: { id }, data: updatePostDto });
   }
 
@@ -202,7 +207,13 @@ export class PostController {
     },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<PostModel> {
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+    @User('sub') requesterId: number,
+    @User('role') requesterRole: Role,
+  ): Promise<PostModel> {
+    await this.postService.assertOwnerOrAdmin(id, requesterId, requesterRole);
+
     return this.postService.remove({ id });
   }
 }
