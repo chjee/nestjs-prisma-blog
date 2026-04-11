@@ -59,16 +59,6 @@ export class UserService {
     return user;
   }
 
-  // async findOne(where: Prisma.UserWhereUniqueInput): Promise<User> {
-  //   return this.prisma.user.findUnique({
-  //     include: {
-  //       posts: true,
-  //       profile: true,
-  //     },
-  //     where,
-  //   });
-  // }
-
   async findUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
     const user = await this.prisma.user.findUnique({
       include: {
