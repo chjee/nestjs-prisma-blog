@@ -40,3 +40,6 @@ lerna-debug.log*
 
 # environment
 .env*.codex
+
+# Claude Code
+.claude/

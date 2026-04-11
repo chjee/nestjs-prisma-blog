@@ -1,19 +1,12 @@
 import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
 import { PostModule } from '../src/post/post.module';
 import { PostService } from '../src/post/post.service';
 
 describe('PostController (e2e)', () => {
   let app: INestApplication;
-  const postService = {
-    create: () => mockPost,
-    findAll: () => [mockPost, mockPost],
-    findOne: () => mockPost,
-    update: () => mockPost,
-    remove: () => mockPost,
-  };
-
   const mockPost = {
     id: 1,
     title: 'Check out Prisma with Nest.js',
@@ -22,6 +15,15 @@ describe('PostController (e2e)', () => {
     createdAt: '2023-11-05T13:09:13.135Z',
     updatedAt: '2023-11-05T13:09:13.135Z',
     userId: 1,
+  };
+  const postService = {
+    create: () => mockPost,
+    findAll: () => [mockPost, mockPost],
+    count: () => 2,
+    findOne: () => mockPost,
+    assertOwnerOrAdmin: async () => undefined,
+    update: () => mockPost,
+    remove: () => mockPost,
   };
 
   beforeAll(async () => {
@@ -33,6 +35,10 @@ describe('PostController (e2e)', () => {
       .compile();
 
     app = moduleRef.createNestApplication();
+    app.use((req: Request, _res: Response, next: NextFunction) => {
+      req.user = { sub: 1, role: 'USER' };
+      next();
+    });
     await app.init();
   });
 
@@ -49,15 +55,15 @@ describe('PostController (e2e)', () => {
       .expect(postService.create());
   });
 
-  it('/GET users', () => {
+  it('/GET post', () => {
     return request(app.getHttpServer())
       .get('/post')
       .query({ skip: 0, take: 3 })
       .expect(HttpStatus.OK)
-      .expect(postService.findAll());
+      .expect({ data: postService.findAll(), total: postService.count() });
   });
 
-  it('/GET post', () => {
+  it('/GET post/:id', () => {
     return request(app.getHttpServer())
       .get(`/post/${mockPost.id}`)
       .expect(HttpStatus.OK)

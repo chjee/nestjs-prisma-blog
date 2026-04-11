@@ -1,7 +1,12 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, User } from '@prisma/client';
+import {
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
+import { Prisma, Role, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UserService {
@@ -38,6 +43,10 @@ export class UserService {
     });
   }
 
+  async count(where?: Prisma.UserWhereInput): Promise<number> {
+    return this.prisma.user.count({ where });
+  }
+
   async findOne(where: Prisma.UserWhereUniqueInput): Promise<Partial<User>> {
     const user = await this.prisma.user.findUnique({
       select: {
@@ -59,16 +68,6 @@ export class UserService {
     return user;
   }
 
-  // async findOne(where: Prisma.UserWhereUniqueInput): Promise<User> {
-  //   return this.prisma.user.findUnique({
-  //     include: {
-  //       posts: true,
-  //       profile: true,
-  //     },
-  //     where,
-  //   });
-  // }
-
   async findUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
     const user = await this.prisma.user.findUnique({
       include: {
@@ -83,6 +82,18 @@ export class UserService {
     }
 
     return user;
+  }
+
+  assertOwnerOrAdmin(
+    targetUserId: number,
+    requesterId: number,
+    requesterRole: Role,
+  ): void {
+    if (requesterRole === 'ADMIN' || targetUserId === requesterId) {
+      return;
+    }
+
+    throw new ForbiddenException('You can only manage your own user account.');
   }
 
   async update(params: {
@@ -106,7 +117,7 @@ export class UserService {
         email: true,
         role: true,
       },
-      data,
+      data: await this.hashPasswordUpdateData(data),
       where,
     });
   }
@@ -130,5 +141,27 @@ export class UserService {
       },
       where,
     });
+  }
+
+  private async hashPasswordUpdateData(
+    data: Prisma.UserUpdateInput,
+  ): Promise<Prisma.UserUpdateInput> {
+    if (typeof data.password === 'string') {
+      return {
+        ...data,
+        password: await bcrypt.hash(data.password, 10),
+      };
+    }
+
+    if (typeof data.password?.set === 'string') {
+      return {
+        ...data,
+        password: {
+          set: await bcrypt.hash(data.password.set, 10),
+        },
+      };
+    }
+
+    return data;
   }
 }
