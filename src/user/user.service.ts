@@ -1,6 +1,11 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, User } from '@prisma/client';
+import { Prisma, Role, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -83,6 +88,18 @@ export class UserService {
     }
 
     return user;
+  }
+
+  assertOwnerOrAdmin(
+    targetUserId: number,
+    requesterId: number,
+    requesterRole: Role,
+  ): void {
+    if (requesterRole === 'ADMIN' || targetUserId === requesterId) {
+      return;
+    }
+
+    throw new ForbiddenException('You can only manage your own user account.');
   }
 
   async update(params: {

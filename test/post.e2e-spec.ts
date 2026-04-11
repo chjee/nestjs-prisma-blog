@@ -1,6 +1,7 @@
 import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
 import { PostModule } from '../src/post/post.module';
 import { PostService } from '../src/post/post.service';
 
@@ -10,6 +11,7 @@ describe('PostController (e2e)', () => {
     create: () => mockPost,
     findAll: () => [mockPost, mockPost],
     findOne: () => mockPost,
+    assertOwnerOrAdmin: async () => undefined,
     update: () => mockPost,
     remove: () => mockPost,
   };
@@ -33,6 +35,10 @@ describe('PostController (e2e)', () => {
       .compile();
 
     app = moduleRef.createNestApplication();
+    app.use((req: Request, _res: Response, next: NextFunction) => {
+      req.user = { sub: 1, role: 'USER' };
+      next();
+    });
     await app.init();
   });
 

@@ -25,7 +25,7 @@ export class AuthService {
 
   async login(user: any) {
     // This method is used by JWTStrategy
-    const payload = { name: user.name, sub: user.id };
+    const payload = { name: user.name, role: user.role, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
     };
