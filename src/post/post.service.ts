@@ -6,14 +6,24 @@ import {
 } from '@nestjs/common';
 import { Post, Prisma, Role } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()
 export class PostService {
   constructor(private prisma: PrismaService) {}
   private readonly logger = new Logger(PostService.name);
 
-  async create(data: Prisma.PostCreateInput): Promise<Post> {
-    return this.prisma.post.create({ data });
+  async create(dto: CreatePostDto): Promise<Post> {
+    const { categoryIds, ...rest } = dto;
+    return this.prisma.post.create({
+      data: {
+        ...rest,
+        ...(categoryIds?.length && {
+          categories: { connect: categoryIds.map((id) => ({ id })) },
+        }),
+      },
+    });
   }
 
   async findAll(params: {
@@ -84,7 +94,7 @@ export class PostService {
 
   async update(params: {
     where: Prisma.PostWhereUniqueInput;
-    data: Prisma.PostUpdateInput;
+    data: UpdatePostDto;
   }): Promise<Post> {
     const { where, data } = params;
     const post = await this.prisma.post.findUnique({ where });
@@ -94,8 +104,14 @@ export class PostService {
       throw new NotFoundException();
     }
 
+    const { categoryIds, ...rest } = data;
     return this.prisma.post.update({
-      data,
+      data: {
+        ...rest,
+        ...(categoryIds !== undefined && {
+          categories: { set: categoryIds.map((id) => ({ id })) },
+        }),
+      },
       where,
     });
   }
