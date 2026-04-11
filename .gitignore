@@ -4,9 +4,7 @@
 
 # omx / agent state
 .omx/
-docs/
-!docs/
-!docs/INFRA_nestjs-prisma-blog-integration-plan.md
+docs/.omx/
 
 # Logs
 logs
