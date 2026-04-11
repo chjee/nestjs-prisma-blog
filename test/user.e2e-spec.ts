@@ -54,6 +54,13 @@ describe('UserController (e2e)', () => {
       .expect(userService.findAll());
   });
 
+  it('/GET users without pagination params', () => {
+    return request(app.getHttpServer())
+      .get('/user')
+      .expect(HttpStatus.OK)
+      .expect(userService.findAll());
+  });
+
   it('/GET user', () => {
     return request(app.getHttpServer())
       .get(`/user/${mockUser.id}`)

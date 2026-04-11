@@ -1,5 +1,6 @@
 import {
   Controller,
+  DefaultValuePipe,
   Get,
   Post,
   Body,
@@ -88,12 +89,12 @@ export class UserController {
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async findAll(
-    @Query('skip', ParseIntPipe) skip: number,
-    @Query('take', ParseIntPipe) take: number,
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
+    @Query('take', new DefaultValuePipe(20), ParseIntPipe) take: number,
   ): Promise<Partial<UserModel>[]> {
     return this.userService.findAll({
-      skip: skip,
-      take: take,
+      skip,
+      take,
     });
   }
 
