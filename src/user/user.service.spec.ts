@@ -1,7 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { User } from '@prisma/client';
-import { UserService } from './user.service';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   createUserDto,
@@ -9,6 +8,7 @@ import {
   user,
   users,
 } from '../common/constants/jest.constants';
+import { UserService } from './user.service';
 
 type MockPrismaUserDelegate = {
   create: jest.Mock;
@@ -37,24 +37,22 @@ describe('UserService', () => {
   });
 
   describe('create', () => {
-    it('should hash the password before creating a user', async () => {
+    it('hashes the password before creating a user', async () => {
       prisma.user.create.mockResolvedValue(user);
       const hashSpy = jest
         .spyOn(bcrypt, 'hash')
         .mockResolvedValue('hashed-password' as never);
 
-      const result = await service.create(createUserDto);
-
+      await expect(service.create(createUserDto)).resolves.toBe(user);
       expect(hashSpy).toHaveBeenCalledWith(createUserDto.password, 10);
       expect(prisma.user.create).toHaveBeenCalledWith({
         data: { ...createUserDto, password: 'hashed-password' },
       });
-      expect(result).toBe(user);
     });
   });
 
   describe('findAll', () => {
-    it('should return an array of users', async () => {
+    it('returns users with related profile and posts data', async () => {
       prisma.user.findMany.mockResolvedValue(users);
 
       await expect(service.findAll({ skip: 0, take: 3 })).resolves.toBe(users);
@@ -77,13 +75,13 @@ describe('UserService', () => {
   });
 
   describe('findOne', () => {
-    it('should return a user', async () => {
+    it('returns a user when it exists', async () => {
       prisma.user.findUnique.mockResolvedValue(user);
 
       await expect(service.findOne({ id: 1 })).resolves.toBe(user);
     });
 
-    it('should throw when the user does not exist', async () => {
+    it('throws when the user does not exist', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
       await expect(service.findOne({ id: 999 })).rejects.toBeInstanceOf(
@@ -92,8 +90,30 @@ describe('UserService', () => {
     });
   });
 
+  describe('findUser', () => {
+    it('returns a user with profile data when it exists', async () => {
+      prisma.user.findUnique.mockResolvedValue(user);
+
+      await expect(service.findUser({ id: 1 })).resolves.toBe(user);
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({
+        include: {
+          profile: true,
+        },
+        where: { id: 1 },
+      });
+    });
+
+    it('throws when the auth lookup user does not exist', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.findUser({ email: 'missing@prisma.io' }),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+  });
+
   describe('update', () => {
-    it('should hash an updated password before persisting the user', async () => {
+    it('hashes an updated password before persisting the user', async () => {
       const updatedUser = { ...user, name: 'Andy' } satisfies User;
       prisma.user.findUnique.mockResolvedValue(user);
       prisma.user.update.mockResolvedValue(updatedUser);
@@ -101,11 +121,12 @@ describe('UserService', () => {
         .spyOn(bcrypt, 'hash')
         .mockResolvedValue('rehashed-password' as never);
 
-      const result = await service.update({
-        where: { id: 1 },
-        data: { password: 'new-password', name: 'Andy' },
-      });
-
+      await expect(
+        service.update({
+          where: { id: 1 },
+          data: { password: 'new-password', name: 'Andy' },
+        }),
+      ).resolves.toBe(updatedUser);
       expect(hashSpy).toHaveBeenCalledWith('new-password', 10);
       expect(prisma.user.update).toHaveBeenCalledWith({
         select: {
@@ -117,20 +138,28 @@ describe('UserService', () => {
         data: { password: 'rehashed-password', name: 'Andy' },
         where: { id: 1 },
       });
-      expect(result).toBe(updatedUser);
     });
 
-    it('should return a user when updating non-password fields', async () => {
-      const updatedUser = { ...user, ...updateUserDto } satisfies User;
+    it('updates a user when it exists', async () => {
       prisma.user.findUnique.mockResolvedValue(user);
-      prisma.user.update.mockResolvedValue(updatedUser);
+      prisma.user.update.mockResolvedValue(user);
 
       await expect(
         service.update({ where: { id: 1 }, data: updateUserDto }),
-      ).resolves.toBe(updatedUser);
+      ).resolves.toBe(user);
+      expect(prisma.user.update).toHaveBeenCalledWith({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+        data: updateUserDto,
+        where: { id: 1 },
+      });
     });
 
-    it('should throw when the user to update does not exist', async () => {
+    it('throws when the user to update does not exist', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
       await expect(
@@ -140,14 +169,23 @@ describe('UserService', () => {
   });
 
   describe('remove', () => {
-    it('should return a user', async () => {
+    it('deletes a user when it exists', async () => {
       prisma.user.findUnique.mockResolvedValue(user);
       prisma.user.delete.mockResolvedValue(user);
 
       await expect(service.remove({ id: 1 })).resolves.toBe(user);
+      expect(prisma.user.delete).toHaveBeenCalledWith({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+        where: { id: 1 },
+      });
     });
 
-    it('should throw when the user to delete does not exist', async () => {
+    it('throws when the user to delete does not exist', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
       await expect(service.remove({ id: 999 })).rejects.toBeInstanceOf(

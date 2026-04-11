@@ -94,12 +94,14 @@ describe('AuthService', () => {
         service.login({
           id: mockUser.id,
           name: mockUser.name,
+          role: mockUser.role,
         }),
       ).resolves.toEqual({
         access_token: 'signed-token',
       });
       expect(jwtService.sign).toHaveBeenCalledWith({
         name: mockUser.name,
+        role: mockUser.role,
         sub: mockUser.id,
       });
     });
