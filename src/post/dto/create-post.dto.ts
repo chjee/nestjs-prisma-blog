@@ -1,9 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsArray,
   IsBoolean,
-  IsOptional,
+  IsInt,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   Length,
   Min,
@@ -47,9 +49,14 @@ export class CreatePostDto {
   @Min(1)
   readonly userId!: number;
 
-  readonly user!: {
-    connect: {
-      id: number;
-    };
-  };
+  @ApiProperty({
+    description: 'Category IDs to connect',
+    example: [1, 2],
+    required: false,
+    type: [Number],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  readonly categoryIds?: number[];
 }

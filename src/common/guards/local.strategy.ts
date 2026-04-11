@@ -1,6 +1,7 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { AuthService } from '../../auth/auth.service';
 
 @Injectable()
@@ -10,7 +11,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
   private readonly logger = new Logger(LocalStrategy.name);
 
-  async validate(email: string, password: string): Promise<any> {
+  async validate(
+    email: string,
+    password: string,
+  ): Promise<Omit<User, 'password'>> {
     const user = await this.authService.validateUser(email, password);
     if (!user) {
       this.logger.error(`User not found: ${JSON.stringify(email)}`);

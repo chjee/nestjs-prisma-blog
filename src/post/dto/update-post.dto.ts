@@ -5,4 +5,5 @@ export class UpdatePostDto extends PickType(PartialType(CreatePostDto), [
   'title',
   'content',
   'published',
+  'categoryIds',
 ] as const) {}

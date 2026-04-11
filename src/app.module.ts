@@ -14,6 +14,7 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { HealthModule } from './health/health.module';
 import { PostModule } from './post/post.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { ProfileModule } from './profile/profile.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -62,6 +63,7 @@ import { UserModule } from './user/user.module';
     CategoryModule,
     UserModule,
     PostModule,
+    ProfileModule,
     PrismaModule,
   ],
   providers: [

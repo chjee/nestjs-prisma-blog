@@ -5,8 +5,8 @@ export class SignInUserDto {
   @ApiProperty({
     description: 'User Email',
     example: 'alice@prisma.io',
-    minLength: 5,
-    maxLength: 20,
+    minLength: 6,
+    maxLength: 60,
   })
   @IsNotEmpty()
   @IsEmail()

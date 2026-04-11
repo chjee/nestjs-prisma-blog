@@ -14,6 +14,7 @@ import { Category } from '@prisma/client';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -21,6 +22,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { Roles } from '../common/decorators/roles.decorator';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryService } from './category.service';
@@ -32,9 +34,10 @@ export class CategoryController {
 
   @ApiBearerAuth('access_token')
   @Post()
+  @Roles(['ADMIN'])
   @ApiOperation({
     summary: 'Category Create',
-    description: 'create a category with name.',
+    description: 'create a category with name. ADMIN only.',
   })
   @ApiBody({ type: CreateCategoryDto })
   @ApiOkResponse({
@@ -48,6 +51,7 @@ export class CategoryController {
     },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiForbiddenResponse({ description: 'Forbidden' })
   async create(
     @Body() createCategoryDto: CreateCategoryDto,
   ): Promise<Category> {
@@ -111,9 +115,10 @@ export class CategoryController {
 
   @ApiBearerAuth('access_token')
   @Patch(':id')
+  @Roles(['ADMIN'])
   @ApiOperation({
     summary: 'Category Update',
-    description: 'update category with id.',
+    description: 'update category with id. ADMIN only.',
   })
   @ApiParam({
     name: 'id',
@@ -133,6 +138,7 @@ export class CategoryController {
     },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiForbiddenResponse({ description: 'Forbidden' })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
@@ -145,9 +151,10 @@ export class CategoryController {
 
   @ApiBearerAuth('access_token')
   @Delete(':id')
+  @Roles(['ADMIN'])
   @ApiOperation({
     summary: 'Category Delete',
-    description: 'delete category with id.',
+    description: 'delete category with id. ADMIN only.',
   })
   @ApiParam({
     name: 'id',
@@ -166,6 +173,7 @@ export class CategoryController {
     },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiForbiddenResponse({ description: 'Forbidden' })
   async remove(@Param('id', ParseIntPipe) id: number): Promise<Category> {
     return this.categoryService.remove({ id });
   }

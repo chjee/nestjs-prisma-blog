@@ -20,11 +20,6 @@ export const createPostDto: CreatePostDto = {
   content: 'A short body for the blog post.',
   published: false,
   userId: 1,
-  user: {
-    connect: {
-      id: 1,
-    },
-  },
 };
 
 export const updatePostDto: UpdatePostDto = {
