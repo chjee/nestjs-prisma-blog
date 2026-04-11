@@ -1,19 +1,17 @@
-version: '3.8'
-
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: nestjs-prisma-blog-mysql
+  app:
+    build:
+      context: .
+    container_name: nestjs-prisma-blog-app
     restart: unless-stopped
+    env_file:
+      - .env
     ports:
-      - '3306:3306'
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-nestjs_prisma_blog}
-      MYSQL_USER: ${MYSQL_USER:-blog_user}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-blog_password}
-    volumes:
-      - mysql_data:/var/lib/mysql
+      - '${PORT:-3000}:3000'
+    command: sh -c "npx prisma db push && node dist/main"
+    networks:
+      - infra_default
 
-volumes:
-  mysql_data:
+networks:
+  infra_default:
+    external: true

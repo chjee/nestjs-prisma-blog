@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.omx
+.claude
+coverage
+logs
+*.log
+.env
+.env.*
+docs/.omx
