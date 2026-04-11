@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { UserService } from '../user/user.service';
-import { JwtService } from '@nestjs/jwt';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-// import { SignInUserDto } from 'src/user/dto/signin-user.dto';
+import { JwtService } from '@nestjs/jwt';
+import { UserService } from '../user/user.service';
+
+type AuthenticatedUser = Omit<User, 'password'>;
+type JwtLoginUser = Pick<AuthenticatedUser, 'id' | 'name'>;
 
 @Injectable()
 export class AuthService {
@@ -11,21 +14,37 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.userService.findUser({
-      email: email,
-    });
-    if (user && (await bcrypt.compare(password, user.password))) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
-      return result;
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<AuthenticatedUser | null> {
+    let user: User;
+
+    try {
+      user = await this.userService.findUser({ email });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return null;
+      }
+
+      throw error;
     }
-    return null;
+
+    if (!(await bcrypt.compare(password, user.password))) {
+      return null;
+    }
+
+    const { password: _password, ...authenticatedUser } = user;
+    void _password;
+    return authenticatedUser;
   }
 
-  async login(user: any) {
-    // This method is used by JWTStrategy
-    const payload = { name: user.name, sub: user.id };
+  async login(user: JwtLoginUser) {
+    const payload = {
+      name: user.name,
+      sub: user.id,
+    };
+
     return {
       access_token: this.jwtService.sign(payload),
     };
