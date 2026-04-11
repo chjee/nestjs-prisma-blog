@@ -6,6 +6,7 @@ import { JwtAuthGuard } from '../src/common/guards/jwt-auth.guard';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+  let aliceId: number;
 
   const mockUser = {
     id: 1,
@@ -33,7 +34,7 @@ describe('AppController (e2e)', () => {
       .useValue({
         canActivate: (context: any) => {
           const request = context.switchToHttp().getRequest();
-          request.user = { sub: 1, name: 'Alice', role: 'ADMIN' };
+          request.user = { sub: aliceId, name: 'Alice', role: 'ADMIN' };
           return true;
         },
       })
@@ -49,6 +50,14 @@ describe('AppController (e2e)', () => {
     );
     app.enableShutdownHooks();
     await app.init();
+
+    const res = await request(app.getHttpServer()).post('/user').send({
+      email: mockUser.email,
+      name: mockUser.name,
+      password: mockUser.password,
+      role: mockUser.role,
+    });
+    aliceId = res.body.id;
   });
 
   describe('/auth/login', () => {
@@ -111,7 +120,7 @@ describe('AppController (e2e)', () => {
           title: 'Just 5 minutes.',
           content: 'A short body for the blog post.',
           published: false,
-          userId: 1,
+          userId: aliceId,
         })
         .expect(HttpStatus.CREATED)
         .expect((res) => {
@@ -151,6 +160,9 @@ describe('AppController (e2e)', () => {
   });
 
   afterAll(async () => {
+    if (aliceId) {
+      await request(app.getHttpServer()).delete(`/user/${aliceId}`);
+    }
     await app.close();
   });
 });

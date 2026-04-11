@@ -22,7 +22,7 @@ import { UserModule } from './user/user.module';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      envFilePath: ['.env.dev', '.env'],
+      envFilePath: ['.env.local', '.env'],
       validationSchema: Joi.object({
         PORT: Joi.number().port().default(3000),
         DATABASE_URL: Joi.string()

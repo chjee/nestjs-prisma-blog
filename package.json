@@ -16,9 +16,19 @@
     "supertest",
     "swagger"
   ],
+  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=20.0.0",
-    "npm": ">=10.0.0"
+    "pnpm": ">=10.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@prisma/client",
+      "@prisma/engines",
+      "bcrypt",
+      "prisma"
+    ]
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

@@ -2,7 +2,7 @@
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-0.0.1-blue.svg?cacheSeconds=2592000" />
   <img src="https://img.shields.io/badge/node-%3E%3D18.17.1-blue.svg" />
-  <img src="https://img.shields.io/badge/npm-%3E%3D9.6.7-blue.svg" />
+  <img src="https://img.shields.io/badge/pnpm-%3E%3D10.0.0-blue.svg" />
   <a href="#" target="_blank">
     <img alt="License: UNLICENSED" src="https://img.shields.io/badge/License-UNLICENSED-yellow.svg" />
   </a>
@@ -12,58 +12,58 @@
 
 ## Prerequisites
 
-- node >=18.17.1
-- npm >=9.6.7
+- node >=20.0.0
+- pnpm >=10.0.0
 
 ## Install
 
 ```sh
-$ npm install
+$ pnpm install
 ```
 
 ## Usage
 
 ```sh
 # development mode
-$ npm run start
+$ pnpm run start
 
 # watch mode
-$ npm run start:dev
+$ pnpm run start:dev
 
 # production mode
-$ npm run start:prod
+$ pnpm run start:prod
 ```
 
 ## Run tests
 
 ```sh
 # unit tests
-$ npm run test
+$ pnpm test
 
 # unit tests watch mode
-$ npm run test:watch
+$ pnpm run test:watch
 
 # unit tests with coverage
-$ npm run test:cov
+$ pnpm run test:cov
 
 # e2e tests
-$ npm run test:e2e
+$ pnpm run test:e2e
 ```
 
 ## Other commands
 
 ```sh
 # generate prisma client
-$ npx prisma generate
+$ pnpm prisma generate
 
 # database migration
-$ npx prisma db seed --preview-feature
+$ pnpm prisma db seed --preview-feature
 
 # run migration
-$ npx prisma migrate dev -name init
+$ pnpm prisma migrate dev -name init
 
 # revert migration
-$ npx run migrate reset
+$ pnpm prisma migrate reset
 ```
 
 ## .env file
