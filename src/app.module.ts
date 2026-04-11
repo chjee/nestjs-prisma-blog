@@ -5,6 +5,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import * as Joi from 'joi';
 import { WinstonModule } from 'nest-winston';
 import { AuthModule } from './auth/auth.module';
+import { CategoryModule } from './category/category.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
@@ -58,6 +59,7 @@ import { UserModule } from './user/user.module';
     ]),
     HealthModule,
     AuthModule,
+    CategoryModule,
     UserModule,
     PostModule,
     PrismaModule,
