@@ -4,8 +4,8 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { Post, Prisma, Role } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class PostService {
@@ -35,6 +35,10 @@ export class PostService {
         categories: { select: { name: true } },
       },
     });
+  }
+
+  async count(where?: Prisma.PostWhereInput): Promise<number> {
+    return this.prisma.post.count({ where });
   }
 
   async findOne(where: Prisma.PostWhereUniqueInput): Promise<Post> {

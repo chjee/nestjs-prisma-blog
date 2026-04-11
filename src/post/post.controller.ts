@@ -26,6 +26,11 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostService } from './post.service';
 
+type PaginatedPostsResponse = {
+  data: PostModel[];
+  total: number;
+};
+
 @Controller('post')
 @ApiTags('Post API')
 export class PostController {
@@ -90,6 +95,7 @@ export class PostController {
             ],
           },
         ],
+        total: 42,
       },
     },
   })
@@ -97,11 +103,13 @@ export class PostController {
   async findAll(
     @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
     @Query('take', new DefaultValuePipe(20), ParseIntPipe) take: number,
-  ): Promise<PostModel[]> {
-    return this.postService.findAll({
-      skip,
-      take,
-    });
+  ): Promise<PaginatedPostsResponse> {
+    const [data, total] = await Promise.all([
+      this.postService.findAll({ skip, take }),
+      this.postService.count(),
+    ]);
+
+    return { data, total };
   }
 
   @ApiBearerAuth('access_token')

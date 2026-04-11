@@ -1,14 +1,14 @@
 import { ForbiddenException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PostController } from './post.controller';
-import { PostService } from './post.service';
 import { PrismaService } from '../prisma/prisma.service';
 import {
+  createPostDto,
   post,
   posts,
-  createPostDto,
   updatePostDto,
 } from '../common/constants/jest.constants';
+import { PostController } from './post.controller';
+import { PostService } from './post.service';
 
 describe('PostController', () => {
   let controller: PostController;
@@ -32,9 +32,14 @@ describe('PostController', () => {
   });
 
   describe('findAll', () => {
-    it('should return an array of posts', async () => {
+    it('should return paginated posts with a total count', async () => {
       jest.spyOn(service, 'findAll').mockImplementation(async () => posts);
-      expect(await controller.findAll(0, 2)).toBe(posts);
+      jest.spyOn(service, 'count').mockResolvedValue(2);
+
+      await expect(controller.findAll(0, 2)).resolves.toEqual({
+        data: posts,
+        total: 2,
+      });
     });
   });
 

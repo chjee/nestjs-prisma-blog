@@ -26,6 +26,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 
+type PaginatedUsersResponse = {
+  data: Partial<UserModel>[];
+  total: number;
+};
+
 @Controller('user')
 @ApiTags('User API')
 export class UserController {
@@ -85,6 +90,7 @@ export class UserController {
             ],
           },
         ],
+        total: 12,
       },
     },
   })
@@ -92,11 +98,13 @@ export class UserController {
   async findAll(
     @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
     @Query('take', new DefaultValuePipe(20), ParseIntPipe) take: number,
-  ): Promise<Partial<UserModel>[]> {
-    return this.userService.findAll({
-      skip,
-      take,
-    });
+  ): Promise<PaginatedUsersResponse> {
+    const [data, total] = await Promise.all([
+      this.userService.findAll({ skip, take }),
+      this.userService.count(),
+    ]);
+
+    return { data, total };
   }
 
   @ApiBearerAuth('access_token')

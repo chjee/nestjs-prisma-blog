@@ -7,20 +7,20 @@ import { UserService } from '../src/user/user.service';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
-  const userService = {
-    create: jest.fn(() => mockUser),
-    findAll: jest.fn(() => [mockUser, mockUser]),
-    findOne: jest.fn(() => mockUser),
-    assertOwnerOrAdmin: jest.fn(() => undefined),
-    update: jest.fn(() => mockUser),
-    remove: jest.fn(() => mockUser),
-  };
-
   const mockUser = {
     id: 1,
     name: 'Alice',
     email: 'alice@prisma.io',
     role: 'USER',
+  };
+  const userService = {
+    create: jest.fn(() => mockUser),
+    findAll: jest.fn(() => [mockUser, mockUser]),
+    count: jest.fn(() => 2),
+    findOne: jest.fn(() => mockUser),
+    assertOwnerOrAdmin: jest.fn(() => undefined),
+    update: jest.fn(() => mockUser),
+    remove: jest.fn(() => mockUser),
   };
 
   beforeEach(() => {
@@ -61,17 +61,17 @@ describe('UserController (e2e)', () => {
       .get('/user')
       .query({ skip: 0, take: 3 })
       .expect(HttpStatus.OK)
-      .expect(userService.findAll());
+      .expect({ data: userService.findAll(), total: userService.count() });
   });
 
   it('/GET users without pagination params', () => {
     return request(app.getHttpServer())
       .get('/user')
       .expect(HttpStatus.OK)
-      .expect(userService.findAll());
+      .expect({ data: userService.findAll(), total: userService.count() });
   });
 
-  it('/GET user', () => {
+  it('/GET user/:id', () => {
     return request(app.getHttpServer())
       .get(`/user/${mockUser.id}`)
       .expect(HttpStatus.OK)
