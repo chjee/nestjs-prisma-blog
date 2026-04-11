@@ -96,7 +96,7 @@ export class UserService {
         email: true,
         role: true,
       },
-      data,
+      data: await this.hashPasswordUpdateData(data),
       where,
     });
   }
@@ -120,5 +120,27 @@ export class UserService {
       },
       where,
     });
+  }
+
+  private async hashPasswordUpdateData(
+    data: Prisma.UserUpdateInput,
+  ): Promise<Prisma.UserUpdateInput> {
+    if (typeof data.password === 'string') {
+      return {
+        ...data,
+        password: await bcrypt.hash(data.password, 10),
+      };
+    }
+
+    if (typeof data.password?.set === 'string') {
+      return {
+        ...data,
+        password: {
+          set: await bcrypt.hash(data.password.set, 10),
+        },
+      };
+    }
+
+    return data;
   }
 }
