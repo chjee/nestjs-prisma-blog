@@ -38,8 +38,12 @@ describe('PostService', () => {
     it('creates a post through Prisma', async () => {
       prisma.post.create.mockResolvedValue(post);
 
-      await expect(service.create(createPostDto)).resolves.toBe(post);
-      expect(prisma.post.create).toHaveBeenCalledWith({ data: createPostDto });
+      const createPostInput = { ...createPostDto, userId: 1 };
+
+      await expect(service.create(createPostInput)).resolves.toBe(post);
+      expect(prisma.post.create).toHaveBeenCalledWith({
+        data: createPostInput,
+      });
     });
   });
 

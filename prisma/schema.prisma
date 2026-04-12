@@ -10,7 +10,7 @@ datasource db {
 
 model Category {
   id    Int    @id @default(autoincrement())
-  name  String
+  name  String @unique @db.VarChar(60)
   posts Post[]
 }
 
@@ -18,10 +18,10 @@ model Post {
   id         Int        @id @default(autoincrement())
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
-  title      String
+  title      String     @db.VarChar(60)
   content    String?    @db.Text
   published  Boolean    @default(false)
-  user       User       @relation(fields: [userId], references: [id])
+  user       User       @relation(fields: [userId], references: [id], onDelete: Restrict)
   userId     Int
   categories Category[]
 
@@ -31,9 +31,9 @@ model Post {
 
 model Profile {
   id     Int    @id @default(autoincrement())
-  bio    String
+  bio    String @db.VarChar(500)
   userId Int    @unique
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {

@@ -19,7 +19,6 @@ export const createPostDto: CreatePostDto = {
   title: 'Just 10 minutes.',
   content: 'A short body for the blog post.',
   published: false,
-  userId: 1,
 };
 
 export const updatePostDto: UpdatePostDto = {
