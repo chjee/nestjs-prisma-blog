@@ -40,7 +40,8 @@ export class PostController {
   @Post()
   @ApiOperation({
     summary: 'Post Create',
-    description: 'create a post with title, published, userId.',
+    description:
+      'create a post with title and published state for the authenticated user.',
   })
   @ApiBody({ type: CreatePostDto })
   @ApiOkResponse({
@@ -59,8 +60,11 @@ export class PostController {
     },
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  async create(@Body() createPostDto: CreatePostDto): Promise<PostModel> {
-    return this.postService.create(createPostDto);
+  async create(
+    @Body() createPostDto: CreatePostDto,
+    @User('sub') requesterId: number,
+  ): Promise<PostModel> {
+    return this.postService.create({ ...createPostDto, userId: requesterId });
   }
 
   @ApiBearerAuth('access_token')

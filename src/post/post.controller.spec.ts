@@ -46,9 +46,14 @@ describe('PostController', () => {
   });
 
   describe('create', () => {
-    it('should return a post', async () => {
+    it('should bind the authenticated user id when creating a post', async () => {
       jest.spyOn(service, 'create').mockImplementation(async () => post);
-      expect(await controller.create(createPostDto)).toBe(post);
+
+      await expect(controller.create(createPostDto, 7)).resolves.toBe(post);
+      expect(service.create).toHaveBeenCalledWith({
+        ...createPostDto,
+        userId: 7,
+      });
     });
   });
 

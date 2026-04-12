@@ -19,7 +19,6 @@ export const createPostDto: CreatePostDto = {
   title: 'Just 10 minutes.',
   content: 'A short body for the blog post.',
   published: false,
-  userId: 1,
 };
 
 export const updatePostDto: UpdatePostDto = {
@@ -31,6 +30,7 @@ export const updatePostDto: UpdatePostDto = {
 export const user: User = {
   id: 1,
   createdAt: new Date(),
+  updatedAt: new Date(),
   email: 'andrew@prisma.io',
   name: 'Andrew',
   password: 'whoami',

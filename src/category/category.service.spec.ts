@@ -1,5 +1,5 @@
-import { NotFoundException } from '@nestjs/common';
-import { Category } from '../generated/prisma/client';
+import { ConflictException, NotFoundException } from '@nestjs/common';
+import { Category, Prisma } from '../generated/prisma/client';
 import { CategoryService } from './category.service';
 import { PrismaService as AppPrismaService } from '../prisma/prisma.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -13,7 +13,12 @@ type MockPrismaCategoryDelegate = {
   delete: jest.Mock;
 };
 
-const category: Category = { id: 1, name: 'Backend' };
+const category: Category = {
+  id: 1,
+  name: 'Backend',
+  createdAt: new Date('2026-04-12T00:00:00.000Z'),
+  updatedAt: new Date('2026-04-12T00:00:00.000Z'),
+};
 const categories: Category[] = [category];
 const createCategoryDto: CreateCategoryDto = { name: 'Backend' };
 const updateCategoryDto: UpdateCategoryDto = { name: 'Data' };
@@ -43,6 +48,19 @@ describe('CategoryService', () => {
     expect(prisma.category.create).toHaveBeenCalledWith({
       data: createCategoryDto,
     });
+  });
+
+  it('rejects duplicate category names on create', async () => {
+    prisma.category.create.mockRejectedValue(
+      new Prisma.PrismaClientKnownRequestError('Unique constraint failed', {
+        code: 'P2002',
+        clientVersion: '7.7.0',
+      }),
+    );
+
+    await expect(service.create(createCategoryDto)).rejects.toBeInstanceOf(
+      ConflictException,
+    );
   });
 
   it('returns all categories', async () => {
@@ -87,6 +105,20 @@ describe('CategoryService', () => {
       ...category,
       ...updateCategoryDto,
     });
+  });
+
+  it('rejects duplicate category names on update', async () => {
+    prisma.category.findUnique.mockResolvedValue(category);
+    prisma.category.update.mockRejectedValue(
+      new Prisma.PrismaClientKnownRequestError('Unique constraint failed', {
+        code: 'P2002',
+        clientVersion: '7.7.0',
+      }),
+    );
+
+    await expect(
+      service.update({ where: { id: 1 }, data: createCategoryDto }),
+    ).rejects.toBeInstanceOf(ConflictException);
   });
 
   it('removes a category', async () => {

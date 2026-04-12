@@ -17,14 +17,18 @@ describe('PostController (e2e)', () => {
     userId: 1,
   };
   const postService = {
-    create: () => mockPost,
-    findAll: () => [mockPost, mockPost],
-    count: () => 2,
-    findOne: () => mockPost,
-    assertOwnerOrAdmin: async () => undefined,
-    update: () => mockPost,
-    remove: () => mockPost,
+    create: jest.fn(() => mockPost),
+    findAll: jest.fn(() => [mockPost, mockPost]),
+    count: jest.fn(() => 2),
+    findOne: jest.fn(() => mockPost),
+    assertOwnerOrAdmin: jest.fn(async () => undefined),
+    update: jest.fn(() => mockPost),
+    remove: jest.fn(() => mockPost),
   };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   beforeAll(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
@@ -49,10 +53,17 @@ describe('PostController (e2e)', () => {
         title: 'Just 10 minutes.',
         content: 'A short body for the blog post.',
         published: false,
-        userId: 1,
       })
       .expect(HttpStatus.CREATED)
-      .expect(postService.create());
+      .expect(postService.create())
+      .expect(() => {
+        expect(postService.create).toHaveBeenCalledWith({
+          title: 'Just 10 minutes.',
+          content: 'A short body for the blog post.',
+          published: false,
+          userId: 1,
+        });
+      });
   });
 
   it('/GET post', () => {

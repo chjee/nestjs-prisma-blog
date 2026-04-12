@@ -16,6 +16,8 @@ describe('ProfileService', () => {
   const profile: Profile = {
     id: 1,
     bio: 'Software engineer who loves Prisma.',
+    createdAt: new Date('2026-04-12T00:00:00.000Z'),
+    updatedAt: new Date('2026-04-12T00:00:00.000Z'),
     userId: 1,
   };
 

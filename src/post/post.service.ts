@@ -9,12 +9,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 
+type CreatePostInput = CreatePostDto & { userId: number };
+
 @Injectable()
 export class PostService {
   constructor(private prisma: PrismaService) {}
   private readonly logger = new Logger(PostService.name);
 
-  async create(dto: CreatePostDto): Promise<Post> {
+  async create(dto: CreatePostInput): Promise<Post> {
     const { categoryIds, ...rest } = dto;
     return this.prisma.post.create({
       data: {
