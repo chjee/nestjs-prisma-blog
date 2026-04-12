@@ -15,5 +15,8 @@
   "extensionsToTreatAsEsm": [".ts"],
   "moduleNameMapper": {
     "^(\\.{1,2}/.*)\\.js$": "$1"
-  }
+  },
+  "maxWorkers": "50%",
+  "forceExit": true,
+  "testTimeout": 15000
 }
