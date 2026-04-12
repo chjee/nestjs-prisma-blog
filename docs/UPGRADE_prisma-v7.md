@@ -56,11 +56,11 @@
 - `@prisma/client` 직접 import가 앱/테스트/seed 코드에서 제거됨
 - `package.json`이 `"type": "module"`과 Node `>=20.19.0` 기준을 반영함
 - seed 실행 경로가 `tsx prisma/seed.ts` 기준으로 정리됨
-- ESM 설정 반영 후 `npm run build` 통과
-- `npx prisma generate` 통과
-- `npm run lint` 통과
-- `npm test` 통과
-- `npm run test:e2e` 통과
+- ESM 설정 반영 후 `pnpm run build` 통과
+- `pnpm prisma generate` 통과
+- `pnpm run lint` 통과
+- `pnpm test` 통과
+- `pnpm run test:e2e` 통과
 
 ---
 
@@ -152,7 +152,15 @@ git pull --ff-only origin develop
 
 이 경우 임의 merge/rebase를 진행하지 말고 현재 상태를 먼저 정리한다.
 
-### 4. 작업 브랜치 생성
+### 4. 기존 브랜치 삭제 및 신규 브랜치 생성
+
+기존 `chore/upgrade-prisma-v7` 브랜치가 남아 있으면 먼저 삭제한다.
+
+```bash
+git branch -D chore/upgrade-prisma-v7 2>/dev/null || true
+```
+
+새 브랜치를 생성한다.
 
 ```bash
 git checkout -b chore/upgrade-prisma-v7
@@ -188,12 +196,12 @@ git status --short
 실행 시작 후 가장 먼저 아래를 확인한다.
 
 ```bash
-npm ls prisma @prisma/client
+pnpm ls prisma @prisma/client
 node -v
-npm -v
-npm run build
-npm test
-npm run test:e2e
+pnpm -v
+pnpm run build
+pnpm test
+pnpm run test:e2e
 ```
 
 목적:
@@ -222,8 +230,8 @@ npm run test:e2e
 실행 명령 기본안:
 
 ```bash
-npm install @prisma/client@7 @prisma/adapter-mariadb dotenv
-npm install -D prisma@7 tsx
+pnpm add @prisma/client@7 @prisma/adapter-mariadb dotenv
+pnpm add -D prisma@7 tsx
 ```
 
 이 단계의 목표 설정값:
@@ -275,7 +283,7 @@ npm install -D prisma@7 tsx
   "type": "module",
   "engines": {
     "node": ">=20.19.0",
-    "npm": ">=10.0.0"
+    "pnpm": ">=10.0.0"
   },
   "scripts": {
     "seed:dev": "tsx prisma/seed.ts",
@@ -321,7 +329,7 @@ Jest 기본안:
 검증:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 이 단계의 목표는 앱이 완전히 동작하는 것이 아니라, ESM 설정 변경 후 최소 build 경로가
@@ -374,7 +382,7 @@ export default defineConfig({
 검증:
 
 ```bash
-npx prisma generate
+pnpm prisma generate
 ```
 
 성공 기준:
@@ -403,7 +411,7 @@ npx prisma generate
 설치 명령:
 
 ```bash
-npm install @prisma/adapter-mariadb
+pnpm add @prisma/adapter-mariadb
 ```
 
 수행 항목:
@@ -427,13 +435,13 @@ npm install @prisma/adapter-mariadb
 검증:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 추가 가능 시:
 
 ```bash
-npm test
+pnpm test
 ```
 
 ### Phase 4. import 전면 교체
@@ -469,7 +477,7 @@ import { PrismaClient } from '../generated/prisma/client';
 
 ```bash
 rg -n "@prisma/client" src test prisma
-npm run build
+pnpm run build
 ```
 
 성공 기준:
@@ -497,16 +505,16 @@ npm run build
 권장 검증 순서:
 
 ```bash
-npx prisma generate
-npm run lint
-npm test
-npm run test:e2e
+pnpm prisma generate
+pnpm run lint
+pnpm test
+pnpm run test:e2e
 ```
 
 필요 시 추가 검증:
 
 ```bash
-npx prisma db seed
+pnpm prisma db seed
 ```
 
 중단 조건:
@@ -589,17 +597,17 @@ git diff --stat develop...HEAD
 ### 2. 최종 검증 실행
 
 ```bash
-npx prisma generate
-npm run build
-npm run lint
-npm test
-npm run test:e2e
+pnpm prisma generate
+pnpm run build
+pnpm run lint
+pnpm test
+pnpm run test:e2e
 ```
 
 필요 시:
 
 ```bash
-npx prisma db seed
+pnpm prisma db seed
 ```
 
 ### 3. 커밋 누락 확인
@@ -684,7 +692,7 @@ PR 설명에는 최소한 아래를 포함한다.
 OMX는 아래 순서대로 진행한다.
 
 1. `develop` 최신화
-2. `chore/upgrade-prisma-v7` 브랜치 생성
+2. 기존 `chore/upgrade-prisma-v7` 브랜치 삭제 후 신규 생성
 3. baseline build/test 확보
 4. ESM 설정 전환
 5. Prisma config / schema 전환
@@ -696,7 +704,7 @@ OMX는 아래 순서대로 진행한다.
 
 작업 도중 사용자에게 다시 묻지 말아야 하는 항목:
 
-- `develop`에서 작업 브랜치를 새로 파는 절차
+- 기존 `chore/upgrade-prisma-v7` 브랜치 삭제 후 `develop`에서 새 브랜치를 파는 절차
 - generated client 위치
 - generated client 비커밋 정책
 - Prisma config 도입
@@ -715,17 +723,17 @@ OMX는 아래 순서대로 진행한다.
 작업 종료 전 아래 명령을 순서대로 수행한다.
 
 ```bash
-npx prisma generate
-npm run build
-npm run lint
-npm test
-npm run test:e2e
+pnpm prisma generate
+pnpm run build
+pnpm run lint
+pnpm test
+pnpm run test:e2e
 ```
 
 가능하면 추가 확인:
 
 ```bash
-npx prisma db seed
+pnpm prisma db seed
 ```
 
 최종 보고에는 반드시 포함:
