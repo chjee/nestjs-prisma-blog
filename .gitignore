@@ -45,3 +45,4 @@ lerna-debug.log*
 
 # Claude Code
 .claude/
+/src/generated/prisma
