@@ -45,4 +45,5 @@ lerna-debug.log*
 
 # Claude Code
 .claude/
+.mcp.json
 /src/generated/prisma
