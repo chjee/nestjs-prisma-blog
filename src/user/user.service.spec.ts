@@ -1,6 +1,6 @@
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { User } from '../generated/prisma/client';
+import { Prisma, User } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   createUserDto,
@@ -195,6 +195,23 @@ describe('UserService', () => {
 
       await expect(service.remove({ id: 999 })).rejects.toBeInstanceOf(
         NotFoundException,
+      );
+    });
+
+    it('translates foreign-key delete conflicts into a conflict exception', async () => {
+      prisma.user.findUnique.mockResolvedValue(user);
+      prisma.user.delete.mockRejectedValue(
+        new Prisma.PrismaClientKnownRequestError(
+          'Foreign key constraint failed',
+          {
+            code: 'P2003',
+            clientVersion: '7.7.0',
+          },
+        ),
+      );
+
+      await expect(service.remove({ id: 1 })).rejects.toBeInstanceOf(
+        ConflictException,
       );
     });
   });

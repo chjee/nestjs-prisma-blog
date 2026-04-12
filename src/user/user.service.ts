@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   Logger,
@@ -132,15 +133,28 @@ export class UserService {
       throw new NotFoundException();
     }
 
-    return this.prisma.user.delete({
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-      },
-      where,
-    });
+    try {
+      return await this.prisma.user.delete({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+        where,
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2003'
+      ) {
+        throw new ConflictException(
+          'Cannot delete a user that still has related posts or a profile.',
+        );
+      }
+
+      throw error;
+    }
   }
 
   private async hashPasswordUpdateData(

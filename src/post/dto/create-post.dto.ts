@@ -4,11 +4,9 @@ import {
   IsBoolean,
   IsInt,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   Length,
-  Min,
 } from 'class-validator';
 
 export class CreatePostDto {
@@ -38,16 +36,6 @@ export class CreatePostDto {
   })
   @IsBoolean()
   readonly published!: boolean;
-
-  @ApiProperty({
-    description: 'Post User Id',
-    example: 1,
-    minimum: 1,
-  })
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(1)
-  readonly userId!: number;
 
   @ApiProperty({
     description: 'Category IDs to connect',

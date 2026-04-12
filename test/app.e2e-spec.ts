@@ -11,7 +11,7 @@ describe('AppController (e2e)', () => {
   const mockUser = {
     id: 1,
     name: 'Alice',
-    password: 'whoami',
+    password: 'whoami-123456',
     email: 'alice@prisma.io',
     role: 'USER',
   };
@@ -120,7 +120,6 @@ describe('AppController (e2e)', () => {
           title: 'Just 5 minutes.',
           content: 'A short body for the blog post.',
           published: false,
-          userId: aliceId,
         })
         .expect(HttpStatus.CREATED)
         .expect((res: SupertestResponse) => {
@@ -150,6 +149,12 @@ describe('AppController (e2e)', () => {
           published: true,
         })
         .expect(HttpStatus.OK);
+    });
+
+    it('DELETE user with related posts returns 409', () => {
+      return request(app.getHttpServer())
+        .delete(`/user/${aliceId}`)
+        .expect(HttpStatus.CONFLICT);
     });
 
     it('DELETE', () => {
