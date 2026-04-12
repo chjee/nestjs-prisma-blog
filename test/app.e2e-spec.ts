@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
-import * as request from 'supertest';
+import request, { type Response as SupertestResponse } from 'supertest';
 import { AppModule } from './../src/app.module';
 import { JwtAuthGuard } from '../src/common/guards/jwt-auth.guard';
 
@@ -80,7 +80,7 @@ describe('AppController (e2e)', () => {
           role: 'ADMIN',
         })
         .expect(HttpStatus.CREATED)
-        .expect((res) => {
+        .expect((res: SupertestResponse) => {
           mockUser.id = res.body.id;
         });
     });
@@ -123,7 +123,7 @@ describe('AppController (e2e)', () => {
           userId: aliceId,
         })
         .expect(HttpStatus.CREATED)
-        .expect((res) => {
+        .expect((res: SupertestResponse) => {
           mockPost.id = res.body.id;
         });
     });

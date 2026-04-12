@@ -1,5 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
-import { Profile } from '@prisma/client';
+import { Profile } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { ProfileService } from './profile.service';
 

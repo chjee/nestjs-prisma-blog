@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { User } from '@prisma/client';
+import { User } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   createUserDto,
@@ -9,6 +9,11 @@ import {
   users,
 } from '../common/constants/jest.constants';
 import { UserService } from './user.service';
+
+jest.mock('bcrypt', () => ({
+  compare: jest.fn(),
+  hash: jest.fn(),
+}));
 
 type MockPrismaUserDelegate = {
   create: jest.Mock;
@@ -39,12 +44,12 @@ describe('UserService', () => {
   describe('create', () => {
     it('hashes the password before creating a user', async () => {
       prisma.user.create.mockResolvedValue(user);
-      const hashSpy = jest
-        .spyOn(bcrypt, 'hash')
+      const hashMock = jest
+        .mocked(bcrypt.hash)
         .mockResolvedValue('hashed-password' as never);
 
       await expect(service.create(createUserDto)).resolves.toBe(user);
-      expect(hashSpy).toHaveBeenCalledWith(createUserDto.password, 10);
+      expect(hashMock).toHaveBeenCalledWith(createUserDto.password, 10);
       expect(prisma.user.create).toHaveBeenCalledWith({
         data: { ...createUserDto, password: 'hashed-password' },
       });
@@ -117,8 +122,8 @@ describe('UserService', () => {
       const updatedUser = { ...user, name: 'Andy' } satisfies User;
       prisma.user.findUnique.mockResolvedValue(user);
       prisma.user.update.mockResolvedValue(updatedUser);
-      const hashSpy = jest
-        .spyOn(bcrypt, 'hash')
+      const hashMock = jest
+        .mocked(bcrypt.hash)
         .mockResolvedValue('rehashed-password' as never);
 
       await expect(
@@ -127,7 +132,7 @@ describe('UserService', () => {
           data: { password: 'new-password', name: 'Andy' },
         }),
       ).resolves.toBe(updatedUser);
-      expect(hashSpy).toHaveBeenCalledWith('new-password', 10);
+      expect(hashMock).toHaveBeenCalledWith('new-password', 10);
       expect(prisma.user.update).toHaveBeenCalledWith({
         select: {
           id: true,

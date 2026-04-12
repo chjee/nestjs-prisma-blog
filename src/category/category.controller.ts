@@ -10,7 +10,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { Category } from '@prisma/client';
+import { Category } from '../generated/prisma/client';
 import {
   ApiBearerAuth,
   ApiBody,
