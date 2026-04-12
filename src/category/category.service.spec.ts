@@ -1,5 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
-import { Category } from '@prisma/client';
+import { Category } from '../generated/prisma/client';
 import { CategoryService } from './category.service';
 import { PrismaService as AppPrismaService } from '../prisma/prisma.service';
 import { CreateCategoryDto } from './dto/create-category.dto';

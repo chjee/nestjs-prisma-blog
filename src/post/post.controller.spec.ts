@@ -1,6 +1,5 @@
 import { ForbiddenException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaService } from '../prisma/prisma.service';
 import {
   createPostDto,
   post,
@@ -12,16 +11,38 @@ import { PostService } from './post.service';
 
 describe('PostController', () => {
   let controller: PostController;
-  let service: PostService;
+  let service: {
+    create: jest.Mock;
+    findAll: jest.Mock;
+    count: jest.Mock;
+    findOne: jest.Mock;
+    assertOwnerOrAdmin: jest.Mock;
+    update: jest.Mock;
+    remove: jest.Mock;
+  };
 
   beforeEach(async () => {
+    service = {
+      create: jest.fn(),
+      findAll: jest.fn(),
+      count: jest.fn(),
+      findOne: jest.fn(),
+      assertOwnerOrAdmin: jest.fn(),
+      update: jest.fn(),
+      remove: jest.fn(),
+    };
+
     const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [PostController],
-      providers: [PrismaService, PostService],
+      providers: [
+        {
+          provide: PostService,
+          useValue: service,
+        },
+      ],
     }).compile();
 
     controller = moduleRef.get<PostController>(PostController);
-    service = moduleRef.get<PostService>(PostService);
   });
 
   describe('create', () => {

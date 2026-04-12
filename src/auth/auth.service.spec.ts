@@ -1,10 +1,15 @@
 import { NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Role } from '@prisma/client';
+import { Role } from '../generated/prisma/client';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
+
+jest.mock('bcrypt', () => ({
+  compare: jest.fn(),
+  hash: jest.fn(),
+}));
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -48,9 +53,7 @@ describe('AuthService', () => {
   describe('validateUser', () => {
     it('should return the authenticated user without the password field', async () => {
       userService.findUser.mockResolvedValue(mockUser);
-      jest
-        .spyOn(bcrypt, 'compare')
-        .mockImplementation(async () => Promise.resolve(true));
+      jest.mocked(bcrypt.compare).mockResolvedValue(true as never);
 
       await expect(
         service.validateUser(mockUser.email, 'plain-password'),
@@ -66,9 +69,7 @@ describe('AuthService', () => {
 
     it('should return null when the password does not match', async () => {
       userService.findUser.mockResolvedValue(mockUser);
-      jest
-        .spyOn(bcrypt, 'compare')
-        .mockImplementation(async () => Promise.resolve(false));
+      jest.mocked(bcrypt.compare).mockResolvedValue(false as never);
 
       await expect(
         service.validateUser(mockUser.email, 'wrong-password'),
@@ -77,12 +78,12 @@ describe('AuthService', () => {
 
     it('should return null when the user does not exist', async () => {
       userService.findUser.mockRejectedValue(new NotFoundException());
-      const compareSpy = jest.spyOn(bcrypt, 'compare');
+      const compareMock = jest.mocked(bcrypt.compare);
 
       await expect(
         service.validateUser('missing@prisma.io', 'plain-password'),
       ).resolves.toBeNull();
-      expect(compareSpy).not.toHaveBeenCalled();
+      expect(compareMock).not.toHaveBeenCalled();
     });
   });
 

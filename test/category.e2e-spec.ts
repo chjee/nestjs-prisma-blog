@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { CategoryModule } from '../src/category/category.module';
 import { CategoryService } from '../src/category/category.service';
 

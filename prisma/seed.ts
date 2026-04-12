@@ -1,5 +1,8 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import { PrismaClient } from '../src/generated/prisma/client';
+import { createPrismaAdapter } from '../src/prisma/prisma.adapter';
+
+const prisma = new PrismaClient({ adapter: createPrismaAdapter() });
+
 async function main() {
   const alice = await prisma.user.upsert({
     where: { email: 'alice@prisma.io' },
@@ -21,6 +24,7 @@ async function main() {
       },
     },
   });
+
   const bob = await prisma.user.upsert({
     where: { email: 'bob@prisma.io' },
     update: {},
@@ -32,7 +36,8 @@ async function main() {
         create: [
           {
             title: 'Follow Prisma on Twitter',
-            content: 'Prisma shares release notes, guides, and community updates.',
+            content:
+              'Prisma shares release notes, guides, and community updates.',
             published: true,
             categories: {
               create: { name: 'Twitter' },
@@ -51,6 +56,7 @@ async function main() {
       },
     },
   });
+
   const ariadne = await prisma.user.upsert({
     where: { email: 'ariadne@prisma.io' },
     update: {},
@@ -82,14 +88,16 @@ async function main() {
       },
     },
   });
+
   console.log({ alice, bob, ariadne });
 }
+
 main()
   .then(async () => {
     await prisma.$disconnect();
   })
-  .catch(async (e) => {
-    console.error(e);
+  .catch(async (error) => {
+    console.error(error);
     await prisma.$disconnect();
     process.exit(1);
   });

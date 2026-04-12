@@ -23,7 +23,7 @@ MySQL, Redis, RabbitMQ 등 여러 프로젝트에서 공용으로 사용하는 �
 - 인프라 서비스 접속은 호스트명이 아닌 Docker 서비스/컨테이너명으로 수행합니다.
 - 개발 편의를 위해 로컬 인프라는 공유하지만, 계정/DB/네트워크 규칙은 고정합니다.
 
-즉, 이 기준안에서는 호스트에서 `npm run start:dev`로 앱을 직접 띄우는 흐름을 표준으로 보지 않습니다.
+즉, 이 기준안에서는 호스트에서 `pnpm run start:dev`로 앱을 직접 띄우는 흐름을 표준으로 보지 않습니다.
 기본 흐름은 `docker compose up`으로 앱 컨테이너를 실행하는 방식입니다.
 
 ---
@@ -486,7 +486,7 @@ docker compose up --build
 
 ```bash
 # 앱 컨테이너 또는 별도 migration job 내부에서 실행
-npx prisma migrate deploy
+pnpm prisma migrate deploy
 ```
 
 개발에서 `migrate dev`를 쓸지 `migrate deploy`를 쓸지는 각 레포의 개발 전략에 맞추되,

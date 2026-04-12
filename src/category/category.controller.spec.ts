@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Category } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
+import { Category } from '../generated/prisma/client';
 import { CategoryController } from './category.controller';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -13,16 +12,34 @@ const updateCategoryDto: UpdateCategoryDto = { name: 'Data' };
 
 describe('CategoryController', () => {
   let controller: CategoryController;
-  let service: CategoryService;
+  let service: {
+    create: jest.Mock;
+    findAll: jest.Mock;
+    findOne: jest.Mock;
+    update: jest.Mock;
+    remove: jest.Mock;
+  };
 
   beforeEach(async () => {
+    service = {
+      create: jest.fn(),
+      findAll: jest.fn(),
+      findOne: jest.fn(),
+      update: jest.fn(),
+      remove: jest.fn(),
+    };
+
     const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [CategoryController],
-      providers: [PrismaService, CategoryService],
+      providers: [
+        {
+          provide: CategoryService,
+          useValue: service,
+        },
+      ],
     }).compile();
 
     controller = moduleRef.get<CategoryController>(CategoryController);
-    service = moduleRef.get<CategoryService>(CategoryService);
   });
 
   it('creates a category', async () => {

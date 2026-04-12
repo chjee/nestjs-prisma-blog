@@ -7,7 +7,7 @@ import {
   ParseIntPipe,
   Put,
 } from '@nestjs/common';
-import { Profile } from '@prisma/client';
+import { Profile } from '../generated/prisma/client';
 import {
   ApiBearerAuth,
   ApiBody,

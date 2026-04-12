@@ -1,4 +1,4 @@
-import { Post, User } from '@prisma/client';
+import { Post, User } from '../../generated/prisma/client';
 import { CreateUserDto } from './../../user/dto/create-user.dto';
 import { UpdateUserDto } from './../../user/dto/update-user.dto';
 import { CreatePostDto } from './../../post/dto/create-post.dto';

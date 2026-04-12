@@ -80,21 +80,16 @@ coverage
 # ---- build stage ----
 FROM node:20-alpine AS builder
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
+RUN corepack enable && corepack prepare pnpm@10.33.0 --activate
+COPY package.json pnpm-lock.yaml ./
+COPY prisma ./prisma
+RUN pnpm install --frozen-lockfile
 COPY . .
-RUN npm run build
+RUN pnpm prisma generate
+RUN pnpm run build
 
-# ---- production stage ----
-FROM node:20-alpine AS runner
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --omit=dev
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
-RUN npx prisma generate
 EXPOSE 3000
-CMD ["node", "dist/main"]
+CMD ["sh", "-c", "pnpm prisma db push && node dist/main"]
 ```
 
 ---
@@ -133,7 +128,7 @@ services:
       mysql:
         condition: service_healthy
     command: >
-      sh -c "npx prisma migrate deploy && node dist/main"
+      sh -c "pnpm prisma migrate deploy && node dist/main"
     networks:
       - infra_default
 
@@ -183,5 +178,5 @@ docker compose down
 
 - `docker-local-infra`의 네트워크명이 `infra_default`인지 확인 필요 (기본값: `{폴더명}_default`)
 - `migrate deploy`는 프로덕션용 명령 — 개발 환경에서는 `migrate dev` 사용
-- 개발 시에는 `docker-local-infra`만 띄우고 앱은 `npm run start:dev`로 실행하는 방식도 유효
+- 개발 시에는 `docker-local-infra`만 띄우고 앱은 `pnpm run start:dev`로 실행하는 방식도 유효
 - `docker-local-infra` 구성 내용은 해당 레포의 `INFRA_local-infra.md` 참고
