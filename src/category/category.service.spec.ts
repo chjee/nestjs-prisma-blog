@@ -13,7 +13,12 @@ type MockPrismaCategoryDelegate = {
   delete: jest.Mock;
 };
 
-const category: Category = { id: 1, name: 'Backend' };
+const category: Category = {
+  id: 1,
+  name: 'Backend',
+  createdAt: new Date('2026-04-12T00:00:00.000Z'),
+  updatedAt: new Date('2026-04-12T00:00:00.000Z'),
+};
 const categories: Category[] = [category];
 const createCategoryDto: CreateCategoryDto = { name: 'Backend' };
 const updateCategoryDto: UpdateCategoryDto = { name: 'Data' };

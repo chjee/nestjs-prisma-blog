@@ -30,6 +30,7 @@ export const updatePostDto: UpdatePostDto = {
 export const user: User = {
   id: 1,
   createdAt: new Date(),
+  updatedAt: new Date(),
   email: 'andrew@prisma.io',
   name: 'Andrew',
   password: 'whoami',

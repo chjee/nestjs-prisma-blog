@@ -6,11 +6,11 @@ export class SignInUserDto {
     description: 'User Email',
     example: 'alice@prisma.io',
     minLength: 6,
-    maxLength: 60,
+    maxLength: 80,
   })
   @IsNotEmpty()
   @IsEmail()
-  @Length(6, 60)
+  @Length(6, 80)
   readonly email!: string;
 
   @ApiProperty({
